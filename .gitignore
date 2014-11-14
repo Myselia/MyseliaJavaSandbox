@@ -1,10 +1,19 @@
+build/
+nbproject/
+.settings/
+bin/
+build.xml
+manifest.mf
+.classpath
+.project
+/dist/
+=======
 *.class
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
