@@ -1,6 +1,7 @@
 build/
 nbproject/
 .settings/
+.gradle/
 bin/
 build.xml
 manifest.mf
