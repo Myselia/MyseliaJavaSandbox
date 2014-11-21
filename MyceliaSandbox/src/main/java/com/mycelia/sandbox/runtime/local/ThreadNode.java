@@ -1,10 +1,14 @@
 package com.mycelia.sandbox.runtime.local;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
+import com.mycelia.sandbox.communication.bean.Atom;
 import com.mycelia.sandbox.communication.bean.Transmission;
-import com.mycelia.sandbox.constants.Constants;
+import com.mycelia.sandbox.constants.OpcodePrefix;
+import com.mycelia.sandbox.constants.SandboxOpcodes;
+import com.mycelia.sandbox.framework.MyceliaNode;
 import com.mycelia.sandbox.runtime.CommunicationDevice;
 
 /**
@@ -21,15 +25,45 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 	
 	private Queue<Transmission> userTransmissions;
 	private Queue<Transmission> frameworkTransmissions;
-	private VirtualStem virtualStem;
+	private List<Transmission> frameworkAnswerTrans;
+	private int lastTransmissionId;
+	private MyceliaNode node;
+	private LocalNodeContainer nodeContainer;
 	
-	public ThreadNode(ThreadGroup threadGroup, String threadName)
+	public ThreadNode(ThreadGroup threadGroup, String threadName,
+			LocalNodeContainer nodeContainer, MyceliaNode node)
 	{
 		super(threadGroup, threadName);
 		
+		this.node=node;
+		this.nodeContainer=nodeContainer;
+		
 		userTransmissions=new LinkedList<Transmission>();
 		frameworkTransmissions=new LinkedList<Transmission>();
-		virtualStem=VirtualStem.getInstance();
+		frameworkAnswerTrans=new LinkedList<Transmission>();
+		lastTransmissionId=0;
+	}
+	
+	public final String getNodeId()
+	{
+		return node.getNodeId();
+	}
+	
+	protected LocalNodeContainer getNodeContainer()
+	{
+		return nodeContainer;
+	}
+	
+	protected String getMasterNodeId()
+	{
+		return nodeContainer.getMasterNodeId();
+	}
+	
+	private int getNewTransmissionId()
+	{
+		lastTransmissionId++;
+		
+		return lastTransmissionId;
 	}
 	
 	@Override
@@ -46,13 +80,22 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 			
 			if(frameworkTrans!=null)
 			{
-				if(frameworkTrans.getOpcode().equals(Constants.STOP_SANDBOX_OPCODE))
+				if(frameworkTrans.getOpcode().equals(SandboxOpcodes.STOP))
 				{
 					/* This node has been request to stop.
 					 * Execute nodeStop lifecycle event and then stop execution.
 					 */
 					nodeStop();
 					break;
+				}
+				else if(isAnswerTransmission(frameworkTrans.getOpcode()))
+				{
+					//Store the framework answer transmission for later retreival.
+					
+					synchronized(frameworkAnswerTrans)
+					{
+						frameworkAnswerTrans.add(frameworkTrans);
+					}
 				}
 				else
 				{
@@ -63,13 +106,21 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 		}
 	}
 	
+	private boolean isAnswerTransmission(String opcode)
+	{
+		return opcode.equals(SandboxOpcodes.GET_RESULT_ANSWER_SLAVE)||
+				opcode.equals(SandboxOpcodes.START_TASK_ANSWER_SLAVE)||
+				opcode.equals(SandboxOpcodes.TASK_STATUS_ANSWER_SLAVE);
+	}
+	
 	/**
 	 * Stores the Transaction in this node's memory buffer for later
 	 * retrieval by the node's thread.
 	 */
 	public final void acceptTransmission(Transmission transmission)
 	{
-		if(transmission.getOpcode().startsWith(Constants.SANDBOX_OPCODE_PREFIX))
+		if(transmission.getOpcode().startsWith(OpcodePrefix.SANDBOX_MASTER)||
+				transmission.getOpcode().startsWith(OpcodePrefix.SANDBOX_SLAVE))
 		{
 			synchronized(frameworkTransmissions)
 			{
@@ -85,6 +136,14 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 		}
 	}
 	
+	private void universalSendTransmission(Transmission transmission)
+	{
+		transmission.setId(getNodeId()+"-"+getNewTransmissionId());
+		transmission.setFrom(getNodeId());
+		
+		nodeContainer.routeTransmission(transmission);
+	}
+	
 	/**
 	 * Sends a Transmission.
 	 * @see CommunicationDevice.sendTransmission(Transmission transmission)
@@ -92,7 +151,32 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 	@Override
 	public final void sendTransmission(Transmission transmission)
 	{
-		virtualStem.routeTransmission(transmission);
+		universalSendTransmission(transmission);
+	}
+	
+	public final void sendTransmissionToMasterNode(String opcode, List<Atom> atoms)
+	{
+		sendTransmission(opcode, getMasterNodeId(), atoms);
+	}
+	
+	public final void sendTransmission(String opcode, String toNodeId, List<Atom> atoms)
+	{
+		Transmission transmission=new Transmission();
+		transmission.setOpcode(opcode);
+		transmission.setTo(toNodeId);
+		transmission.setAtoms(atoms);
+		
+		universalSendTransmission(transmission);
+	}
+	
+	public final void sendTransmission(String opcode, String toNodeId, Atom atom)
+	{
+		Transmission transmission=new Transmission();
+		transmission.setOpcode(opcode);
+		transmission.setTo(toNodeId);
+		transmission.addAtom(atom);
+		
+		universalSendTransmission(transmission);
 	}
 	
 	/**
@@ -182,6 +266,72 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 					return frameworkTransmissions.remove();
 				}
 			}
+			
+			elapsedTimeMilli=(System.nanoTime()-startTimeNano)/1000;
+		}while(timeout==-1||elapsedTimeMilli>=timeout);
+		
+		return null;
+	}
+	
+	/**
+	 * Retrieves an already stored framework answer transmission with the specified opcode.
+	 */
+	public final Transmission readFrameworkAnswerTransmission(String opcode)
+	{
+		Transmission ret=null;
+		
+		synchronized(frameworkAnswerTrans)
+		{
+			for(Transmission transmission: frameworkAnswerTrans)
+			{
+				if(transmission.getOpcode().equals(opcode))
+				{
+					ret=transmission;
+					break;
+				}
+			}
+			
+			if(ret!=null)
+				frameworkAnswerTrans.remove(ret);
+		}
+		
+		return ret;
+	}
+	
+	/**
+	 * Same as readFrameworkAnswerTransmission(String opcode) but with timeout.
+	 */
+	public final Transmission receiveFrameworkAnswerTransmission(String opcode, int timeout)
+	{
+		Transmission transmission=readFrameworkAnswerTransmission(opcode);
+		
+		if(transmission!=null)
+		{
+			return transmission;
+		}
+		else if(timeout==0)
+		{
+			return null;
+		}
+		
+		long startTimeNano=System.nanoTime();
+		long elapsedTimeMilli;
+		
+		do
+		{
+			try
+			{
+				sleep(SLEEP_DURATION);
+			}
+			catch(InterruptedException e)
+			{
+				//Do nothing.
+			}
+			
+			transmission=readFrameworkAnswerTransmission(opcode);
+			
+			if(transmission!=null)
+				return transmission;
 			
 			elapsedTimeMilli=(System.nanoTime()-startTimeNano)/1000;
 		}while(timeout==-1||elapsedTimeMilli>=timeout);

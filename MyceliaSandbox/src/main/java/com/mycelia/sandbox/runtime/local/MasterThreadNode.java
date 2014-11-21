@@ -8,9 +8,9 @@ public class MasterThreadNode extends ThreadNode
 {
 	private MyceliaMasterNode node;
 	
-	public MasterThreadNode(MyceliaMasterNode node, ThreadGroup threadGroup)
+	public MasterThreadNode(ThreadGroup threadGroup, LocalNodeContainer nodeContainer, MyceliaMasterNode node)
 	{
-		super(threadGroup, Constants.MASTER_NODE_THREAD_NAME);
+		super(threadGroup, Constants.MASTER_NODE_THREAD_NAME+" - "+node.getNodeId(), nodeContainer, node);
 		
 		this.node=node;
 	}

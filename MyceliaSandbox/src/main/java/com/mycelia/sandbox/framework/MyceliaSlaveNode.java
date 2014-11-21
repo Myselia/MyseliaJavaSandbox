@@ -1,9 +1,12 @@
 package com.mycelia.sandbox.framework;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
+import com.mycelia.sandbox.runtime.NodeContainer;
 
 public abstract class MyceliaSlaveNode extends MyceliaNode
 {
@@ -11,9 +14,9 @@ public abstract class MyceliaSlaveNode extends MyceliaNode
 	{
 		private Object result;
 		private TaskInstance taskInstance;
-		private Object[] parameters;
+		private Serializable[] parameters;
 		
-		public TaskInstanceThread(ThreadGroup threadGroup, TaskInstance taskInstance, Object... parameters)
+		public TaskInstanceThread(ThreadGroup threadGroup, TaskInstance taskInstance, Serializable... parameters)
 		{
 			super(threadGroup, "Task Insance ID "+taskInstance.getInstanceId());
 			
@@ -52,6 +55,13 @@ public abstract class MyceliaSlaveNode extends MyceliaNode
 		lastTaskInstanceId=0;
 	}
 	
+	@Override
+	public final void setNodeContainer(NodeContainer nodeContainer)
+	{
+		//We just override this with "final" so children cant access the NodeContainer.
+	}
+	
+	
 	private int getNewTaskInstanceId()
 	{
 		lastTaskInstanceId++;
@@ -71,7 +81,7 @@ public abstract class MyceliaSlaveNode extends MyceliaNode
 	 * @return
 	 * 			The task instance ID.
 	 */
-	public synchronized final int startTask(Task task, Object... parameters)
+	public synchronized final int startTask(Task task, Serializable... parameters)
 	{
 		TaskInstance taskInstance=new TaskInstance();
 		taskInstance.setNodeId(getNodeId());
@@ -136,9 +146,9 @@ public abstract class MyceliaSlaveNode extends MyceliaNode
 		TaskInstance taskInstance=startedTasks.get(taskInstanceId);
 		
 		if(taskInstance==null)
-			return false;
+			return true;
 		
-		return startedThreads.get(taskInstance).isAlive();
+		return !startedThreads.get(taskInstance).isAlive();
 	}
 	
 	//Methods implemented/overriden by the end user.
@@ -173,5 +183,5 @@ public abstract class MyceliaSlaveNode extends MyceliaNode
 	 * @return
 	 * 			The task's result.
 	 */
-	protected abstract Object executeTask(Task task, Object... parameters);
+	protected abstract Serializable executeTask(Task task, Serializable... parameters);
 }

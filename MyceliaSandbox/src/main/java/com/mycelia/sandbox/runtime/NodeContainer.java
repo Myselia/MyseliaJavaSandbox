@@ -3,12 +3,17 @@ package com.mycelia.sandbox.runtime;
 import java.util.Set;
 
 import com.mycelia.sandbox.exception.MyceliaRuntimeException;
+import com.mycelia.sandbox.framework.MyceliaMasterNode;
+import com.mycelia.sandbox.framework.MyceliaSlaveNode;
 import com.mycelia.sandbox.framework.RemoteSlaveNode;
-import com.mycelia.sandbox.framework.Task;
-import com.mycelia.sandbox.framework.TaskInstance;
 
 public interface NodeContainer
 {
+	public <M extends MyceliaMasterNode, S extends MyceliaSlaveNode>
+		void setNodeClasses(Class<M> masterNodeClass, Class<S> slaveNodeClass);
+	
+	public void setLoadBalancer(LoadBalancer loadBalancer);
+	
 	/**
 	 * Creates and start the master node.
 	 * 
@@ -20,14 +25,16 @@ public interface NodeContainer
 	/**
 	 * Stop the master node and deletes all slave nodes.
 	 */
-	public void stopMasterAndDeleteAllNodes();
+	public void stopMasterAndDeleteAllNodes(String localNodeId);
 	
 	public String getMasterNodeId();
+	
+	public Set<String> getAllSlaveNodeIds();
 	
 	/**
 	 * Creates a new slave node.
 	 */
-	public RemoteSlaveNode createSlaveNode();
+	public RemoteSlaveNode createSlaveNode(String localNodeId);
 	
 	/**
 	 * Creates multiple new slave nodes.
@@ -35,23 +42,12 @@ public interface NodeContainer
 	 * @param numberOfNodes
 	 * 			The number of slave nodes to create.
 	 */
-	public Set<RemoteSlaveNode> createSlaveNodes(int numberOfNodes);
-	
-	/**
-	 * Start the specified task on any salve node.
-	 * 
-	 * @param task
-	 * 			The task to execute on a slave node.
-	 * 
-	 * @return
-	 * 			The task instance created.
-	 */
-	public TaskInstance startTaskOnAnyNode(Task task);
+	public Set<RemoteSlaveNode> createSlaveNodes(String localNodeId, int numberOfNodes);
 	
 	/**
 	 * Gets the <code>RemoteSlaveNode</code> object associated with the specified node ID.  
 	 */
-	public RemoteSlaveNode getRemoteSlaveNode(String nodeId);
+	public RemoteSlaveNode getRemoteSlaveNode(String localNodeId, String remoteNodeId);
 	
 	/**
 	 * Deletes a slave node.
@@ -60,7 +56,7 @@ public interface NodeContainer
 	 * @param nodeId
 	 * 			The node ID of the node to delete.
 	 */
-	public void deleteSlaveNode(String nodeId);
+	public void deleteSlaveNode(String localNodeId, String remoteNodeId);
 	
 	/**
 	 * Deletes multiple slave nodes.
@@ -69,11 +65,11 @@ public interface NodeContainer
 	 * @param numberOfNodes
 	 * 			The number of slave nodes to delete.
 	 */
-	public void deleteSlaveNodes(int numberOfNodes);
+	public void deleteSlaveNodes(String localNodeId, int numberOfNodes);
 	
 	/**
 	 * Deletes all slave nodes.
 	 * This stop execution of all task instances on all the nodes and releases all the nodes' resources.
 	 */
-	public void deleteAllSlaveNodes();
+	public void deleteAllSlaveNodes(String localNodeId);
 }

@@ -1,32 +1,60 @@
 package com.mycelia.sandbox.runtime.local;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import com.mycelia.sandbox.communication.bean.Atom;
+import com.mycelia.sandbox.communication.bean.Transmission;
+import com.mycelia.sandbox.constants.SandboxOpcodes;
 import com.mycelia.sandbox.exception.MyceliaRuntimeException;
 import com.mycelia.sandbox.framework.MyceliaMasterNode;
 import com.mycelia.sandbox.framework.MyceliaNode;
 import com.mycelia.sandbox.framework.MyceliaSlaveNode;
 import com.mycelia.sandbox.framework.RemoteSlaveNode;
-import com.mycelia.sandbox.framework.Task;
-import com.mycelia.sandbox.framework.TaskInstance;
+import com.mycelia.sandbox.runtime.LoadBalancer;
 import com.mycelia.sandbox.runtime.NodeContainer;
+import com.mycelia.sandbox.shared.SharedUtil;
 
-public class LocalNodeContainer<M extends MyceliaMasterNode, S extends MyceliaSlaveNode> implements NodeContainer
+public class LocalNodeContainer implements NodeContainer
 {
-	private Class<M> masterNodeClass;
-	private Class<S> slaveNodeClass;
+	private static int DEFAULT_SLEEP_TIME=100;
+	
+	private Class<? extends MyceliaMasterNode> masterNodeClass;
+	private Class<? extends MyceliaSlaveNode> slaveNodeClass;
 	private ThreadGroup nodeThreadGroup;
-	private Map<String, ThreadNode> nodeMap;
 	private int lastNodeId;
 	private String masterNodeId;
+	private LoadBalancer loadBalancer;
 	
-	public LocalNodeContainer(Class<M> masterNodeClass, Class<S> slaveNodeClass)
+	/**
+	 * Key: node ID, Value: ThreadNode
+	 */
+	private Map<String, ThreadNode> nodeMap;
+	
+	public LocalNodeContainer()
 	{
 		nodeThreadGroup=new ThreadGroup("Mycelia Nodes");
 		nodeMap=new HashMap<String, ThreadNode>();
 		lastNodeId=0;
+	}
+	
+	public void routeTransmission(Transmission transmission)
+	{
+		ThreadNode remoteThreadNode=getThreadNode(transmission.getTo());
+		
+		remoteThreadNode.acceptTransmission(transmission);
+	}
+	
+	@Override
+	public <M extends MyceliaMasterNode, S extends MyceliaSlaveNode> void setNodeClasses(Class<M> masterNodeClass, Class<S> slaveNodeClass)
+	{
+		this.masterNodeClass=masterNodeClass;
+		this.slaveNodeClass=slaveNodeClass;
 	}
 	
 	private String getNewNodeId()
@@ -36,10 +64,22 @@ public class LocalNodeContainer<M extends MyceliaMasterNode, S extends MyceliaSl
 		return Integer.toString(lastNodeId);
 	}
 	
-	private <N extends MyceliaNode> MyceliaNode createNode(Class<N> nodeClass) throws InstantiationException, IllegalAccessException
+	private ThreadNode getThreadNode(String nodeId)
 	{
-		MyceliaNode node=nodeClass.newInstance();
+		ThreadNode threadNode=nodeMap.get(nodeId);
+		
+		if(threadNode==null)
+			throw new MyceliaRuntimeException("Node ID "+nodeId+" not found.");
+		
+		return threadNode;
+	}
+	
+	private <N extends MyceliaNode> N createNode(Class<N> nodeClass) throws InstantiationException, IllegalAccessException
+	{
+		N node=nodeClass.newInstance();
 		node.setNodeId(getNewNodeId());
+		node.setNodeContainer(this);
+		node.setLoadBalancer(loadBalancer);
 		
 		return node;
 	}
@@ -49,10 +89,15 @@ public class LocalNodeContainer<M extends MyceliaMasterNode, S extends MyceliaSl
 	{
 		try
 		{
-			MyceliaMasterNode masterNode=(MyceliaMasterNode)createNode(masterNodeClass);
+			MyceliaMasterNode masterNode=createNode(masterNodeClass);
 			
-			MasterThreadNode masterThread=new MasterThreadNode(masterNode, nodeThreadGroup);
+			//Create Daemon wrapper 
+			MasterThreadNode masterThread=new MasterThreadNode(nodeThreadGroup, this, masterNode);
 			masterNodeId=masterNode.getNodeId();
+			//creates bridge between MyceliaMasterNode and the Daemon.
+			masterNode.setCommunicationDevice(masterThread);
+			
+			//Start Master node
 			nodeMap.put(masterNodeId, masterThread);
 			masterThread.start();
 			
@@ -65,64 +110,157 @@ public class LocalNodeContainer<M extends MyceliaMasterNode, S extends MyceliaSl
 	}
 
 	@Override
-	public void stopMasterAndDeleteAllNodes()
+	public void stopMasterAndDeleteAllNodes(String localNodeId)
 	{
-		// TODO Auto-generated method stub
+		ThreadNode localThreadNode=getThreadNode(localNodeId);
+		ThreadNode remoteThreadNode=getThreadNode(masterNodeId);
 		
-	}
-
-	@Override
-	public RemoteSlaveNode createSlaveNode()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<RemoteSlaveNode> createSlaveNodes(int numberOfNodes)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public TaskInstance startTaskOnAnyNode(Task task)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public RemoteSlaveNode getRemoteSlaveNode(String nodeId)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void deleteSlaveNode(String nodeId)
-	{
-		// TODO Auto-generated method stub
+		localThreadNode.sendTransmission(SandboxOpcodes.STOP, masterNodeId, new ArrayList<Atom>(0));
 		
+		SharedUtil.joindIgnoreInterrupts(remoteThreadNode);
+		
+		deleteAllSlaveNodes(localNodeId);
 	}
 
 	@Override
-	public void deleteSlaveNodes(int numberOfNodes)
+	public RemoteSlaveNode createSlaveNode(String localNodeId)
 	{
-		// TODO Auto-generated method stub
-		
+		try
+		{
+			MyceliaSlaveNode slaveNode=createNode(slaveNodeClass);
+			
+			//Create Daemon wrapper 
+			SlaveThreadNode slaveThread=new SlaveThreadNode(nodeThreadGroup, this, slaveNode);
+			
+			//creates bridge between MyceliaSlaveNode and the Daemon.
+			slaveNode.setCommunicationDevice(slaveThread);
+			
+			//Start Slave node
+			nodeMap.put(slaveNode.getNodeId(), slaveThread);
+			slaveThread.start();
+			
+			ThreadNode localThreadNode=getThreadNode(localNodeId);
+			
+			return new RemoteSlaveNodeImpl(localThreadNode, slaveNode.getNodeId());
+		}
+		catch(Exception e)
+		{
+			throw new MyceliaRuntimeException(e);
+		}
 	}
 
 	@Override
-	public void deleteAllSlaveNodes()
+	public Set<RemoteSlaveNode> createSlaveNodes(String localNodeId, int numberOfNodes)
 	{
-		// TODO Auto-generated method stub
+		Set<RemoteSlaveNode> nodes=new HashSet<RemoteSlaveNode>();
 		
+		for(int i=0; i<numberOfNodes; i++)
+			nodes.add(createSlaveNode(localNodeId));
+		
+		return nodes;
+	}
+
+	@Override
+	public RemoteSlaveNode getRemoteSlaveNode(String localNodeId, String remoteNodeId)
+	{
+		ThreadNode localThreadNode=getThreadNode(localNodeId);
+		ThreadNode remoteThreadNode=getThreadNode(remoteNodeId);
+		
+		return new RemoteSlaveNodeImpl(localThreadNode, remoteThreadNode.getNodeId());
+	}
+
+	@Override
+	public void deleteSlaveNode(String localNodeId, String remoteNodeId)
+	{
+		ThreadNode localThreadNode=getThreadNode(localNodeId);
+		ThreadNode remoteThreadNode=getThreadNode(remoteNodeId);
+		
+		localThreadNode.sendTransmission(SandboxOpcodes.STOP, remoteNodeId, new ArrayList<Atom>(0));
+		
+		SharedUtil.joindIgnoreInterrupts(remoteThreadNode);
+	}
+
+	@Override
+	public void deleteSlaveNodes(String localNodeId, int numberOfNodes)
+	{
+		ThreadNode localThreadNode=getThreadNode(localNodeId);
+		int i=0;
+		List<ThreadNode> stoppedNodes=new ArrayList<ThreadNode>(numberOfNodes);
+		String nodeId;
+		
+		for(Entry<String, ThreadNode> entry: nodeMap.entrySet())
+		{
+			if(!entry.getValue().isAlive())
+				continue;
+			
+			nodeId=entry.getValue().getNodeId();
+			
+			if(nodeId.equals(masterNodeId))
+				continue;
+			
+			localThreadNode.sendTransmission(SandboxOpcodes.STOP, nodeId, new ArrayList<Atom>(0));
+			stoppedNodes.add(entry.getValue());
+			i++;
+			
+			if(i==numberOfNodes)
+				break;
+		}
+		
+		for(ThreadNode threadNode: stoppedNodes)
+			SharedUtil.joindIgnoreInterrupts(threadNode);
+	}
+
+	@Override
+	public void deleteAllSlaveNodes(String localNodeId)
+	{
+		ThreadNode localThreadNode=getThreadNode(localNodeId);
+		String nodeId;
+		
+		for(Entry<String, ThreadNode> entry: nodeMap.entrySet())
+		{
+			if(!entry.getValue().isAlive())
+				continue;
+			
+			nodeId=entry.getValue().getNodeId();
+			
+			if(nodeId.equals(masterNodeId))
+				continue;
+			
+			localThreadNode.sendTransmission(SandboxOpcodes.STOP, nodeId, new ArrayList<Atom>(0));
+		}
+		
+		while(nodeThreadGroup.activeCount()>1)
+		{
+			try
+			{
+				Thread.sleep(DEFAULT_SLEEP_TIME);
+			}
+			catch(InterruptedException e)
+			{
+				//Do nothing
+			}
+		}
 	}
 
 	@Override
 	public String getMasterNodeId()
 	{
 		return masterNodeId;
+	}
+
+	@Override
+	public Set<String> getAllSlaveNodeIds()
+	{
+		Set<String> allNodes=nodeMap.keySet();
+		
+		allNodes.remove(masterNodeId);
+		
+		return allNodes;
+	}
+
+	@Override
+	public void setLoadBalancer(LoadBalancer loadBalancer)
+	{
+		this.loadBalancer=loadBalancer;
 	}
 }

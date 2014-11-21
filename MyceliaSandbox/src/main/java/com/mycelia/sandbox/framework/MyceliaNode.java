@@ -7,9 +7,9 @@ import com.mycelia.sandbox.communication.AtomConverter;
 import com.mycelia.sandbox.communication.bean.Atom;
 import com.mycelia.sandbox.communication.bean.Transmission;
 import com.mycelia.sandbox.constants.Constants;
-import com.mycelia.sandbox.exception.MyceliaRuntimeException;
 import com.mycelia.sandbox.framework.communication.Message;
 import com.mycelia.sandbox.runtime.CommunicationDevice;
+import com.mycelia.sandbox.runtime.LoadBalancer;
 import com.mycelia.sandbox.runtime.NodeContainer;
 
 public abstract class MyceliaNode
@@ -32,91 +32,46 @@ public abstract class MyceliaNode
 		this.nodeContainer=nodeContainer;
 	}
 	
+	/**
+	 * Abstract method to propagate LoadBalancer only to some children.
+	 */
+	public abstract void setLoadBalancer(LoadBalancer loadBalancer);
+	
 	public final void setCommunicationDevice(CommunicationDevice communicationDevice)
 	{
 		this.communicationDevice=communicationDevice;
 	}
 	
-	private Atom toAtom(Serializable serializable)
-	{
-		Atom atom;
-		
-		if(serializable instanceof Double)
-		{
-			atom=atomConverter.toAtom((Double)serializable);
-		}
-		else if(serializable instanceof Integer)
-		{
-			atom=atomConverter.toAtom((Integer)serializable);
-		}
-		else
-		{
-			try
-			{
-				atom=atomConverter.toAtom(serializable);
-			}
-			catch(IOException e)
-			{
-				throw new MyceliaRuntimeException(e);
-			}
-		}
-		
-		return atom;
-	}
-	
-	private Serializable fromAtom(Atom atom)
-	{
-		if(atom.getAtomClass().equals(Integer.class.getCanonicalName()))
-		{
-			return atomConverter.getAsInt(atom); 
-		}
-		else if(atom.getAtomClass().equals(Double.class.getCanonicalName()))
-		{
-			return atomConverter.getAsDouble(atom); 
-		}
-		else
-		{
-			try
-			{
-				return atomConverter.getAsSerializable(atom);
-			}
-			catch(ClassNotFoundException | IOException e)
-			{
-				throw new MyceliaRuntimeException(e);
-			}
-		}
-	}
-	
-	private Transmission toTransmission(Message message)
+	private Transmission toTransmission(Message message) throws IOException
 	{
 		Transmission transmission=new Transmission();
 		transmission.setFrom(nodeId);
 		transmission.setOpcode(Constants.DEFAULT_USER_OPCODE_PREFIX);
 		
 		for(Serializable serializable: message.getElements())
-			transmission.addAtom(toAtom(serializable));
+			transmission.addAtom(atomConverter.toAtomInferType(serializable));
 		
 		return transmission;
 	}
 	
-	private Message toMessage(Transmission transmission)
+	private Message toMessage(Transmission transmission) throws ClassNotFoundException, IOException
 	{
 		Message message=new Message();
 		message.setFrom(transmission.getFrom());
 		message.setTo(transmission.getTo());
 		
 		for(Atom atom: transmission.getAtoms())
-			message.addElement(fromAtom(atom));
+			message.addElement(atomConverter.fromAtomInferType(atom));
 		
 		return message;
 	}
 	
-	protected final void sendMessage(Message message)
+	protected final void sendMessage(Message message) throws IOException
 	{
 		communicationDevice.sendTransmission(toTransmission(message));
 	}
 	
-	protected final Message receiveMessage(int timeout)
+	protected final Message receiveMessage(int timeout) throws ClassNotFoundException, IOException
 	{
 		Transmission transmission=communicationDevice.receiveTransmission(timeout);
 		
@@ -126,13 +81,13 @@ public abstract class MyceliaNode
 		return toMessage(transmission);
 	}
 	
-	protected final void sendMessageToMaster(Message message)
+	protected final void sendMessageToMaster(Message message) throws IOException
 	{
 		message.setTo(nodeContainer.getMasterNodeId());
 		sendMessage(message);
 	}
 	
-	protected final void sendMessageToAnySlave(Message message)
+	protected final void sendMessageToAnySlave(Message message) throws IOException
 	{
 		message.setTo(Constants.ANY_SLAVE_NODE);
 		sendMessage(message);

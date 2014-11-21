@@ -1,15 +1,17 @@
 package com.mycelia.sandbox.framework;
 
+import com.mycelia.sandbox.runtime.ApplicationRuntime;
+import com.mycelia.sandbox.runtime.ApplicationRuntimeFactory;
 import com.mycelia.sandbox.runtime.ApplicationRuntimeType;
-import com.mycelia.sandbox.runtime.NodeContainer;
-import com.mycelia.sandbox.runtime.NodeContainerFactory;
+import com.mycelia.sandbox.runtime.LoadBalancerStrategy;
 
 public class MyceliaApplication<M extends MyceliaMasterNode, S extends MyceliaSlaveNode>
 {
 	private Class<M> masterModule;
 	private Class<S> slaveModule;
 	private ApplicationRuntimeType runtimeType;
-	private NodeContainer nodeContainer;
+	private LoadBalancerStrategy strategy;
+	private ApplicationRuntime applicationRuntime;
 	
 	public MyceliaApplication(Class<M> masterModule, Class<S> slaveModule)
 	{
@@ -17,11 +19,17 @@ public class MyceliaApplication<M extends MyceliaMasterNode, S extends MyceliaSl
 		this.slaveModule=slaveModule;
 		
 		runtimeType=ApplicationRuntimeType.LOCAL;
+		strategy=LoadBalancerStrategy.ROUND_ROBIN;
 	}
 	
 	public void setRuntimeType(ApplicationRuntimeType runtimeType)
 	{
 		this.runtimeType=runtimeType;
+	}
+	
+	public void setLoadBalancerStrategy(LoadBalancerStrategy strategy)
+	{
+		this.strategy=strategy;
 	}
 	
 	/**
@@ -30,12 +38,13 @@ public class MyceliaApplication<M extends MyceliaMasterNode, S extends MyceliaSl
 	 */
 	public void start()
 	{
-		if(nodeContainer==null)
+		if(applicationRuntime==null)
 		{
-			nodeContainer=NodeContainerFactory.getInstance().getNodeContainer(runtimeType, masterModule, slaveModule);
+			applicationRuntime=ApplicationRuntimeFactory.getInstance().getApplicationRuntime(
+					runtimeType, strategy, masterModule, slaveModule);
 		}
 		
-		nodeContainer.createAndStartMasterNode();
+		applicationRuntime.getNodeContainer().createAndStartMasterNode();
 	}
 	
 	/**
@@ -45,6 +54,6 @@ public class MyceliaApplication<M extends MyceliaMasterNode, S extends MyceliaSl
 	 */
 	public void stop()
 	{
-		nodeContainer.stopMasterAndDeleteAllNodes();
+		applicationRuntime.getNodeContainer().stopMasterAndDeleteAllNodes(null);
 	}
 }

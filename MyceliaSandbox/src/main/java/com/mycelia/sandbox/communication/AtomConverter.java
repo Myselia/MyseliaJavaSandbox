@@ -8,10 +8,62 @@ import com.mycelia.sandbox.communication.bean.Atom;
 
 public class AtomConverter
 {
+	public Serializable fromAtomInferType(Atom atom) throws ClassNotFoundException, IOException
+	{
+		if(atom.getAtomClass().equals(Integer.class.getCanonicalName()))
+		{
+			return getAsInt(atom); 
+		}
+		else if(atom.getAtomClass().equals(Double.class.getCanonicalName()))
+		{
+			return getAsDouble(atom); 
+		}
+		else if(atom.getAtomClass().equals(String.class.getCanonicalName()))
+		{
+			return getAsString(atom); 
+		}
+		else
+		{
+			return getAsSerializable(atom);
+		}
+	}
+	
+	public Atom toAtomInferType(Serializable serializable) throws IOException
+	{
+		Atom atom;
+		
+		if(serializable instanceof Double)
+		{
+			atom=toAtom((Double)serializable);
+		}
+		else if(serializable instanceof Integer)
+		{
+			atom=toAtom((Integer)serializable);
+		}
+		else if(serializable instanceof String)
+		{
+			atom=toAtom((String)serializable);
+		}
+		else
+		{
+			atom=toAtom(serializable);
+		}
+		
+		return atom;
+	}
+	
 	public Atom toAtom(Integer integer)
 	{
 		Atom atom=new Atom("", Integer.class.getCanonicalName());
 		atom.addContent(Integer.toString(integer));
+
+		return atom;
+	}
+	
+	public Atom toAtom(String str)
+	{
+		Atom atom=new Atom("", String.class.getCanonicalName());
+		atom.addContent(str);
 
 		return atom;
 	}
@@ -40,6 +92,11 @@ public class AtomConverter
 	public Double getAsDouble(Atom atom)
 	{
 		return (Double)Double.parseDouble(atom.getContent());
+	}
+	
+	public String getAsString(Atom atom)
+	{
+		return atom.getContent();
 	}
 	
 	public Serializable getAsSerializable(Atom atom) throws ClassNotFoundException, IOException

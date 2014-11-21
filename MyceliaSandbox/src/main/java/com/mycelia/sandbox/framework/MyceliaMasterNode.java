@@ -1,12 +1,15 @@
 package com.mycelia.sandbox.framework;
 
+import java.io.Serializable;
 import java.util.Set;
 
+import com.mycelia.sandbox.runtime.LoadBalancer;
 import com.mycelia.sandbox.runtime.NodeContainer;
 
 public abstract class MyceliaMasterNode extends MyceliaNode
 {
 	private NodeContainer nodeContainer;
+	private LoadBalancer loadBalancer;
 	
 	//Methods provided by Mycelia framework.
 	
@@ -16,9 +19,15 @@ public abstract class MyceliaMasterNode extends MyceliaNode
 	}
 	
 	@Override
-	public void setNodeContainer(NodeContainer nodeContainer)
+	public final void setNodeContainer(NodeContainer nodeContainer)
 	{
 		this.nodeContainer=nodeContainer;
+	}
+	
+	@Override
+	public final void setLoadBalancer(LoadBalancer loadBalancer)
+	{
+		this.loadBalancer=loadBalancer;
 	}
 	
 	/**
@@ -26,7 +35,7 @@ public abstract class MyceliaMasterNode extends MyceliaNode
 	 */
 	protected final RemoteSlaveNode createSlaveNode()
 	{
-		return nodeContainer.createSlaveNode();
+		return nodeContainer.createSlaveNode(getNodeId());
 	}
 	
 	/**
@@ -37,7 +46,7 @@ public abstract class MyceliaMasterNode extends MyceliaNode
 	 */
 	protected final Set<RemoteSlaveNode> createSlaveNodes(int numberOfNodes)
 	{
-		return nodeContainer.createSlaveNodes(numberOfNodes);
+		return nodeContainer.createSlaveNodes(getNodeId(), numberOfNodes);
 	}
 	
 	/**
@@ -49,9 +58,14 @@ public abstract class MyceliaMasterNode extends MyceliaNode
 	 * @return
 	 * 			The task instance created.
 	 */
-	protected final TaskInstance startTaskOnAnyNode(Task task)
+	protected final TaskInstance startTaskOnAnyNode(Task task, Serializable... parameters)
 	{
-		return nodeContainer.startTaskOnAnyNode(task);
+		String slaveNodeId=loadBalancer.selectSlaveNode();
+		
+		RemoteSlaveNode remoteSlave=nodeContainer.getRemoteSlaveNode(getNodeId(), slaveNodeId);
+		int taskInstanceId=remoteSlave.startTask(task, parameters);
+		
+		return remoteSlave.getTaskInstance(taskInstanceId);
 	}
 	
 	/**
@@ -59,7 +73,7 @@ public abstract class MyceliaMasterNode extends MyceliaNode
 	 */
 	protected final RemoteSlaveNode getRemoteSlaveNode(String nodeId)
 	{
-		return nodeContainer.getRemoteSlaveNode(nodeId);
+		return nodeContainer.getRemoteSlaveNode(getNodeId(), nodeId);
 	}
 	
 	/**
@@ -71,7 +85,7 @@ public abstract class MyceliaMasterNode extends MyceliaNode
 	 */
 	protected final void deleteSlaveNode(String nodeId)
 	{
-		nodeContainer.deleteSlaveNode(nodeId);
+		nodeContainer.deleteSlaveNode(getNodeId(), nodeId);
 	}
 	
 	/**
@@ -83,7 +97,7 @@ public abstract class MyceliaMasterNode extends MyceliaNode
 	 */
 	protected final void deleteSlaveNodes(int numberOfNodes)
 	{
-		nodeContainer.deleteSlaveNodes(numberOfNodes);
+		nodeContainer.deleteSlaveNodes(getNodeId(), numberOfNodes);
 	}
 	
 	/**
@@ -92,7 +106,7 @@ public abstract class MyceliaMasterNode extends MyceliaNode
 	 */
 	protected final void deleteAllSlaveNodes()
 	{
-		nodeContainer.deleteAllSlaveNodes();
+		nodeContainer.deleteAllSlaveNodes(getNodeId());
 	}
 	
 	//Methods implemented by the end user.
