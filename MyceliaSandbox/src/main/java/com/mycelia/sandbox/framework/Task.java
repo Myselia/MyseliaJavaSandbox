@@ -8,6 +8,11 @@ public class Task
 	{
 		//Do nothing
 	}
+	
+	public Task(String name)
+	{
+		this.name=name;
+	}
 
 	public String getName()
 	{

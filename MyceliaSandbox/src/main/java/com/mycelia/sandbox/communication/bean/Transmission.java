@@ -1,5 +1,6 @@
 package com.mycelia.sandbox.communication.bean;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class Transmission
@@ -12,7 +13,7 @@ public class Transmission
 
 	public Transmission()
 	{
-		//Do nothing
+		atoms=new LinkedList<Atom>();
 	}
 	
 	public Transmission(String id, String from, String to)
@@ -20,6 +21,8 @@ public class Transmission
 		this.id=id;
 		this.from=from;
 		this.to=to;
+		
+		atoms=new LinkedList<Atom>();
 	}
 
 	public Transmission(Transmission transmission)
@@ -96,6 +99,22 @@ public class Transmission
 	@Override
 	public String toString()
 	{
-		return "[id: "+id+", to: "+to+", from: "+from+", opcode: "+opcode+", length: "+atoms.size()+"]";
+		String str="[id: "+id+", to: "+to+", from: "+from+", opcode: "+opcode+", atoms: {";
+		
+		boolean first=true;
+		
+		for(Atom atom: atoms)
+		{
+			if(first)
+				first=false;
+			else
+				str+=", ";
+			
+			str+=atom.toString();
+		}
+		
+		str+="}]";
+		
+		return str;
 	}
 }

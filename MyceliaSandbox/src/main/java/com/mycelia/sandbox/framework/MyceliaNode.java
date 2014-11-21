@@ -3,6 +3,8 @@ package com.mycelia.sandbox.framework;
 import java.io.IOException;
 import java.io.Serializable;
 
+import ch.qos.logback.classic.Logger;
+
 import com.mycelia.sandbox.communication.AtomConverter;
 import com.mycelia.sandbox.communication.bean.Atom;
 import com.mycelia.sandbox.communication.bean.Transmission;
@@ -67,7 +69,7 @@ public abstract class MyceliaNode
 	}
 	
 	protected final void sendMessage(Message message) throws IOException
-	{
+	{ 
 		communicationDevice.sendTransmission(toTransmission(message));
 	}
 	

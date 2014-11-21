@@ -31,4 +31,10 @@ public class Atom
 	{
 		return atomClass;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "[class: "+atomClass+", content: \""+content+"\"]";
+	}
 }

@@ -32,7 +32,7 @@ public class LocalApplicationRuntime implements ApplicationRuntime
 	@Override
 	public void setLoadBalancerStrategy(LoadBalancerStrategy strategy)
 	{
-		loadBalancer=LoadBalancerFactory.getInstance().getLoadBalancer(strategy);
+		this.strategy=strategy;
 	}
 	
 	@Override

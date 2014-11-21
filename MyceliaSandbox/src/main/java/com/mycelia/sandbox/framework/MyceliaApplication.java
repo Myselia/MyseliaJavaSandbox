@@ -24,11 +24,17 @@ public class MyceliaApplication<M extends MyceliaMasterNode, S extends MyceliaSl
 	
 	public void setRuntimeType(ApplicationRuntimeType runtimeType)
 	{
+		if(runtimeType==null)
+			throw new IllegalArgumentException("runtimeType cannot be null");
+		
 		this.runtimeType=runtimeType;
 	}
 	
 	public void setLoadBalancerStrategy(LoadBalancerStrategy strategy)
 	{
+		if(strategy==null)
+			throw new IllegalArgumentException("strategy cannot be null");
+		
 		this.strategy=strategy;
 	}
 	

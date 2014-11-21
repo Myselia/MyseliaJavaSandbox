@@ -141,6 +141,8 @@ public class LocalNodeContainer implements NodeContainer
 			
 			ThreadNode localThreadNode=getThreadNode(localNodeId);
 			
+			loadBalancer.addNode(slaveNode.getNodeId()); 
+			
 			return new RemoteSlaveNodeImpl(localThreadNode, slaveNode.getNodeId());
 		}
 		catch(Exception e)
@@ -175,6 +177,8 @@ public class LocalNodeContainer implements NodeContainer
 		ThreadNode localThreadNode=getThreadNode(localNodeId);
 		ThreadNode remoteThreadNode=getThreadNode(remoteNodeId);
 		
+		loadBalancer.removeNode(remoteNodeId);
+		
 		localThreadNode.sendTransmission(SandboxOpcodes.STOP, remoteNodeId, new ArrayList<Atom>(0));
 		
 		SharedUtil.joindIgnoreInterrupts(remoteThreadNode);
@@ -197,6 +201,8 @@ public class LocalNodeContainer implements NodeContainer
 			
 			if(nodeId.equals(masterNodeId))
 				continue;
+			
+			loadBalancer.removeNode(nodeId);
 			
 			localThreadNode.sendTransmission(SandboxOpcodes.STOP, nodeId, new ArrayList<Atom>(0));
 			stoppedNodes.add(entry.getValue());
@@ -225,6 +231,8 @@ public class LocalNodeContainer implements NodeContainer
 			
 			if(nodeId.equals(masterNodeId))
 				continue;
+			
+			loadBalancer.removeNode(nodeId);
 			
 			localThreadNode.sendTransmission(SandboxOpcodes.STOP, nodeId, new ArrayList<Atom>(0));
 		}

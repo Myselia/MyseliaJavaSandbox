@@ -22,9 +22,12 @@ public class LoadBalancerFactory
 	
 	public LoadBalancer getLoadBalancer(LoadBalancerStrategy strategy)
 	{
+		if(strategy==null)
+			throw new IllegalArgumentException("strategy cannot be null");
+		
 		if(strategy==LoadBalancerStrategy.ROUND_ROBIN)
 			return new RoundRobinLoadBalancer();
-		
-		throw new NotImplementedException();
+		else
+			throw new NotImplementedException();
 	}
 }

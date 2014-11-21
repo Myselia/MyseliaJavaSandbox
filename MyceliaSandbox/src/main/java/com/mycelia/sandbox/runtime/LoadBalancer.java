@@ -10,7 +10,9 @@ public interface LoadBalancer
 	 * @return the slave's node ID.
 	 */
 	public String selectSlaveNode();
-	
+
+	public void addNode(String nodeId);
 	public void addNodes(Set<String> nodeIds);
+	public void removeNode(String nodeId);
 	public void removeNodes(Set<String> nodeIds);
 }

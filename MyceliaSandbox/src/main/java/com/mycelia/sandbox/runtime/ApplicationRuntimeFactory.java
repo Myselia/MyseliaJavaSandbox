@@ -26,11 +26,16 @@ public class ApplicationRuntimeFactory
 		ApplicationRuntime getApplicationRuntime(ApplicationRuntimeType runtimeType, LoadBalancerStrategy strategy,
 				Class<M> masterNodeClass, Class<S> slaveNodeClass)
 	{
+		if(strategy==null)
+			throw new IllegalArgumentException("strategy cannot be null");
+		
 		if(runtimeType==ApplicationRuntimeType.LOCAL)
 		{
 			LocalApplicationRuntime runtime=new LocalApplicationRuntime();
 			runtime.setLoadBalancerStrategy(strategy);
 			runtime.setNodeClasses(masterNodeClass, slaveNodeClass);
+			
+			runtime.initialize();
 			
 			return runtime;
 		}

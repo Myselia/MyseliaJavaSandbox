@@ -4,6 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.mycelia.sandbox.communication.bean.Atom;
 import com.mycelia.sandbox.communication.bean.Transmission;
 import com.mycelia.sandbox.constants.OpcodePrefix;
@@ -22,6 +25,8 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 	 * How many milliseconds to sleep when waiting for an event to occur.
 	 */
 	private static final int SLEEP_DURATION=100;
+	
+	private static Logger logger=LoggerFactory.getLogger(ThreadNode.class);
 	
 	private Queue<Transmission> userTransmissions;
 	private Queue<Transmission> frameworkTransmissions;
@@ -119,6 +124,8 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 	 */
 	public final void acceptTransmission(Transmission transmission)
 	{
+		logger.debug("Node ID "+getNodeId()+" received: "+transmission.toString());
+		
 		if(transmission.getOpcode().startsWith(OpcodePrefix.SANDBOX_MASTER)||
 				transmission.getOpcode().startsWith(OpcodePrefix.SANDBOX_SLAVE))
 		{
@@ -141,6 +148,8 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 		transmission.setId(getNodeId()+"-"+getNewTransmissionId());
 		transmission.setFrom(getNodeId());
 		
+		logger.debug("Node ID "+getNodeId()+" sent: "+transmission.toString());
+		
 		nodeContainer.routeTransmission(transmission);
 	}
 	
@@ -151,6 +160,7 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 	@Override
 	public final void sendTransmission(Transmission transmission)
 	{
+		logger.debug("sendTransmission(Transmission transmission)");
 		universalSendTransmission(transmission);
 	}
 	
@@ -166,6 +176,7 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 		transmission.setTo(toNodeId);
 		transmission.setAtoms(atoms);
 		
+		logger.debug("sendTransmission(String opcode, String toNodeId, List<Atom> atoms)");
 		universalSendTransmission(transmission);
 	}
 	
@@ -176,6 +187,7 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 		transmission.setTo(toNodeId);
 		transmission.addAtom(atom);
 		
+		logger.debug("sendTransmission(String opcode, String toNodeId, Atom atom)");
 		universalSendTransmission(transmission);
 	}
 	

@@ -1,11 +1,13 @@
 package com.mycelia.sandbox.framework;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.mycelia.sandbox.runtime.LoadBalancer;
 import com.mycelia.sandbox.runtime.NodeContainer;
 
 public abstract class MyceliaSlaveNode extends MyceliaNode
@@ -16,7 +18,7 @@ public abstract class MyceliaSlaveNode extends MyceliaNode
 		private TaskInstance taskInstance;
 		private Serializable[] parameters;
 		
-		public TaskInstanceThread(ThreadGroup threadGroup, TaskInstance taskInstance, Serializable... parameters)
+		public TaskInstanceThread(ThreadGroup threadGroup, TaskInstance taskInstance, Serializable[] parameters)
 		{
 			super(threadGroup, "Task Insance ID "+taskInstance.getInstanceId());
 			
@@ -61,6 +63,11 @@ public abstract class MyceliaSlaveNode extends MyceliaNode
 		//We just override this with "final" so children cant access the NodeContainer.
 	}
 	
+	@Override
+	public final void setLoadBalancer(LoadBalancer loadBalancer)
+	{
+		//We just override this with "final" so children cant access the LoadBalancer.
+	}
 	
 	private int getNewTaskInstanceId()
 	{
@@ -81,7 +88,7 @@ public abstract class MyceliaSlaveNode extends MyceliaNode
 	 * @return
 	 * 			The task instance ID.
 	 */
-	public synchronized final int startTask(Task task, Serializable... parameters)
+	public synchronized final int startTask(Task task, Serializable[] parameters)
 	{
 		TaskInstance taskInstance=new TaskInstance();
 		taskInstance.setNodeId(getNodeId());
@@ -183,5 +190,5 @@ public abstract class MyceliaSlaveNode extends MyceliaNode
 	 * @return
 	 * 			The task's result.
 	 */
-	protected abstract Serializable executeTask(Task task, Serializable... parameters);
+	protected abstract Serializable executeTask(Task task, Serializable[] parameters);
 }

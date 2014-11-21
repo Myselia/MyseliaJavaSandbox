@@ -25,6 +25,28 @@ public class RoundRobinLoadBalancer implements LoadBalancer
 			newNodes.addAll(nodeIds);
 		}
 	}
+	
+	@Override
+	public void addNode(String nodeId)
+	{
+		synchronized(newNodes)
+		{
+			newNodes.add(nodeId);
+		}
+	}
+
+	@Override
+	public void removeNode(String nodeId)
+	{
+		synchronized(newNodes)
+		{
+			synchronized(usedNodes)
+			{
+				newNodes.remove(nodeId);
+				usedNodes.remove(nodeId);
+			}
+		}
+	}
 
 	@Override
 	public void removeNodes(Set<String> nodeIds)

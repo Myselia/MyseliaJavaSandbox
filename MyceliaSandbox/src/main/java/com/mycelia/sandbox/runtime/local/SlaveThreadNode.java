@@ -1,6 +1,8 @@
 package com.mycelia.sandbox.runtime.local;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.mycelia.sandbox.communication.AtomConverter;
@@ -53,7 +55,7 @@ public class SlaveThreadNode extends ThreadNode
 	{
 		List<Atom> atoms=transmission.getAtoms();
 		String taskName=atomConverter.getAsString(atoms.get(0));
-		Object[] arguments=new Object[atoms.size()-1];
+		Serializable[] arguments=new Serializable[atoms.size()-1];
 	
 		//Deserialize transmission
 		try
@@ -94,6 +96,6 @@ public class SlaveThreadNode extends ThreadNode
 		answer.setTo(transmission.getFrom());
 		answer.addAtom(atomConverter.toAtom(taskInstanceId));
 		
-		sendTransmission(transmission);
+		sendTransmission(answer);
 	}
 }
