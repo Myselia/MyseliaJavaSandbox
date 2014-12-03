@@ -1,7 +1,11 @@
 package com.mycelia.sandbox.framework;
 
-public class TaskInstance
+import java.io.Serializable;
+
+public class TaskInstance implements Serializable
 {
+	private static final long serialVersionUID=-6183684795324760980L;
+	
 	private String nodeId;
 	private int instanceId;
 	private Task task;
@@ -39,5 +43,11 @@ public class TaskInstance
 	public void setNodeId(String nodeId)
 	{
 		this.nodeId = nodeId;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "[nodeId: \""+nodeId+"\", instance ID: "+instanceId+", task: "+task+" ]";
 	}
 }

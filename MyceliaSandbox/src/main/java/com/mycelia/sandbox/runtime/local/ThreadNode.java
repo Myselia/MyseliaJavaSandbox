@@ -87,6 +87,8 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 			{
 				if(frameworkTrans.getOpcode().equals(SandboxOpcodes.STOP))
 				{
+					logger.debug("Node ID "+getNodeId()+" stopping...");
+					
 					/* This node has been request to stop.
 					 * Execute nodeStop lifecycle event and then stop execution.
 					 */
@@ -115,7 +117,8 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 	{
 		return opcode.equals(SandboxOpcodes.GET_RESULT_ANSWER_SLAVE)||
 				opcode.equals(SandboxOpcodes.START_TASK_ANSWER_SLAVE)||
-				opcode.equals(SandboxOpcodes.TASK_STATUS_ANSWER_SLAVE);
+				opcode.equals(SandboxOpcodes.TASK_STATUS_ANSWER_SLAVE)||
+				opcode.equals(SandboxOpcodes.GET_TASK_INSTANCE_ANSWER_SLAVE);
 	}
 	
 	/**
@@ -160,7 +163,7 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 	@Override
 	public final void sendTransmission(Transmission transmission)
 	{
-		logger.debug("sendTransmission(Transmission transmission)");
+		//logger.debug("sendTransmission(Transmission transmission)");
 		universalSendTransmission(transmission);
 	}
 	
@@ -176,7 +179,7 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 		transmission.setTo(toNodeId);
 		transmission.setAtoms(atoms);
 		
-		logger.debug("sendTransmission(String opcode, String toNodeId, List<Atom> atoms)");
+		//logger.debug("sendTransmission(String opcode, String toNodeId, List<Atom> atoms)");
 		universalSendTransmission(transmission);
 	}
 	
@@ -187,7 +190,17 @@ public abstract class ThreadNode extends Thread implements CommunicationDevice
 		transmission.setTo(toNodeId);
 		transmission.addAtom(atom);
 		
-		logger.debug("sendTransmission(String opcode, String toNodeId, Atom atom)");
+		//logger.debug("sendTransmission(String opcode, String toNodeId, Atom atom)");
+		universalSendTransmission(transmission);
+	}
+	
+	public final void sendTransmission(String opcode, String toNodeId)
+	{
+		Transmission transmission=new Transmission();
+		transmission.setOpcode(opcode);
+		transmission.setTo(toNodeId);
+		
+		//logger.debug("sendTransmission(String opcode, String toNodeId, Atom atom)");
 		universalSendTransmission(transmission);
 	}
 	

@@ -22,6 +22,10 @@ public class AtomConverter
 		{
 			return getAsString(atom); 
 		}
+		else if(atom.getAtomClass().equals(Boolean.class.getCanonicalName()))
+		{
+			return getAsBoolean(atom); 
+		}
 		else
 		{
 			return getAsSerializable(atom);
@@ -44,6 +48,10 @@ public class AtomConverter
 		{
 			atom=toAtom((String)serializable);
 		}
+		else if(serializable instanceof Boolean)
+		{
+			atom=toAtom((Boolean)serializable);
+		}
 		else
 		{
 			atom=toAtom(serializable);
@@ -60,6 +68,14 @@ public class AtomConverter
 		return atom;
 	}
 	
+	public Atom toAtom(Boolean bool)
+	{
+		Atom atom=new Atom("", Boolean.class.getCanonicalName());
+		atom.addContent(Boolean.toString(bool));
+
+		return atom;
+	}
+	
 	public Atom toAtom(String str)
 	{
 		Atom atom=new Atom("", String.class.getCanonicalName());
@@ -70,7 +86,7 @@ public class AtomConverter
 
 	public Atom toAtom(Double value)
 	{
-		Atom atom=new Atom("", Integer.class.getCanonicalName());
+		Atom atom=new Atom("", Double.class.getCanonicalName());
 		atom.addContent(Double.toString(value));
 
 		return atom;
@@ -87,6 +103,11 @@ public class AtomConverter
 	public Integer getAsInt(Atom atom)
 	{
 		return (Integer)Integer.parseInt(atom.getContent());
+	}
+	
+	public Boolean getAsBoolean(Atom atom)
+	{
+		return (Boolean)Boolean.parseBoolean(atom.getContent());
 	}
 	
 	public Double getAsDouble(Atom atom)

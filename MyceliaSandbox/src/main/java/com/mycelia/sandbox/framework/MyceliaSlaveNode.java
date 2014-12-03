@@ -1,7 +1,6 @@
 package com.mycelia.sandbox.framework;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -14,7 +13,7 @@ public abstract class MyceliaSlaveNode extends MyceliaNode
 {
 	public class TaskInstanceThread extends Thread
 	{
-		private Object result;
+		private Serializable result;
 		private TaskInstance taskInstance;
 		private Serializable[] parameters;
 		
@@ -31,7 +30,7 @@ public abstract class MyceliaSlaveNode extends MyceliaNode
 			return taskInstance;
 		}
 		
-		public Object getResult()
+		public Serializable getResult()
 		{
 			return result;
 		}
@@ -114,7 +113,7 @@ public abstract class MyceliaSlaveNode extends MyceliaNode
 	 * 			The result of this specific task instance
 	 * 			or null of the task does not exists or is not done yet.
 	 */
-	public synchronized final Object getTaskResult(int taskInstanceId)
+	public synchronized final Serializable getTaskResult(int taskInstanceId)
 	{
 		TaskInstance taskInstance=startedTasks.get(taskInstanceId);
 		
@@ -143,6 +142,14 @@ public abstract class MyceliaSlaveNode extends MyceliaNode
 			tasks.add(((TaskInstanceThread)thread).getTaskInstance());
 		
 		return tasks;
+	}
+	
+	/**
+	 * Return a TaskInstance object given the taskInstanceId.
+	 */
+	public synchronized final TaskInstance getTaskInstance(int taskInstanceId)
+	{
+		return startedTasks.get(taskInstanceId);
 	}
 	
 	/**

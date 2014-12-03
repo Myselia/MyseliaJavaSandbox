@@ -9,6 +9,7 @@ public class SharedUtil
 			try
 			{
 				thread.join();
+				return;
 			}
 			catch(InterruptedException e)
 			{

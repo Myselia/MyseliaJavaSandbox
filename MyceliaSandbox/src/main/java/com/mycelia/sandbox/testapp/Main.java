@@ -17,7 +17,7 @@ public class Main
 		logger.info("Starting test app...");
 		application.start();
 		
-		Thread.sleep(20*1000);
+		Thread.sleep(10*1000);
 		
 		logger.info("Stopping test app...");
 		application.stop();

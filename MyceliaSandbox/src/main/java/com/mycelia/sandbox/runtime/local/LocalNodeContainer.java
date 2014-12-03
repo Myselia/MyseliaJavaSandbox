@@ -112,6 +112,11 @@ public class LocalNodeContainer implements NodeContainer
 	@Override
 	public void stopMasterAndDeleteAllNodes(String localNodeId)
 	{
+		if(localNodeId==null)
+		{
+			localNodeId=masterNodeId;
+		}
+		
 		ThreadNode localThreadNode=getThreadNode(localNodeId);
 		ThreadNode remoteThreadNode=getThreadNode(masterNodeId);
 		

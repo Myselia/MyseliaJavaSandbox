@@ -1,7 +1,7 @@
 package com.mycelia.sandbox.framework;
 
 public class Task
-{
+{	
 	private String name;
 	
 	public Task()
@@ -22,5 +22,11 @@ public class Task
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "[name: \""+name+"\"]";
 	}
 }

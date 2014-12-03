@@ -3,6 +3,7 @@ package com.mycelia.sandbox.runtime.local;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -38,8 +39,54 @@ public class RemoteSlaveNodeImpl implements RemoteSlaveNode
 	@Override
 	public Set<Task> getTasks()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		String opcode=SandboxOpcodes.GET_TASKS_REQUEST_SLAVE;
+		
+		localThreadNode.sendTransmission(opcode, remoteNodeId);
+		
+		Transmission answer=localThreadNode.receiveFrameworkAnswerTransmission(
+				SandboxOpcodes.GET_RESULT_ANSWER_SLAVE, DEFAULT_TIMOUT);
+		
+		if(answer==null)
+			throw new MyceliaTimeoutException("Timeout while waiting for slave node to answer.");
+		
+		Set<Task> tasks=new HashSet<Task>(answer.getAtoms().size());
+		
+		for(Atom atom: answer.getAtoms())
+		{
+			tasks.add(new Task(atomConverter.getAsString(atom)));
+		}
+		
+		return tasks;
+	}
+	
+	@Override
+	public Set<TaskInstance> getRunningTaskInstance()
+	{
+		String opcode=SandboxOpcodes.GET_RUNNING_TASKS_REQUEST_SLAVE;
+		
+		try
+		{
+			localThreadNode.sendTransmission(opcode, remoteNodeId);
+			
+			Transmission answer=localThreadNode.receiveFrameworkAnswerTransmission(
+					SandboxOpcodes.GET_RUNNING_TASKS_ANSWER_SLAVE, DEFAULT_TIMOUT);
+			
+			if(answer==null)
+				throw new MyceliaTimeoutException("Timeout while waiting for slave node to answer.");
+			
+			Set<TaskInstance> taskInstances=new HashSet<TaskInstance>(answer.getAtoms().size());
+			
+			for(Atom atom: answer.getAtoms())
+			{
+				taskInstances.add((TaskInstance)atomConverter.getAsSerializable(atom));
+			}
+			
+			return taskInstances;
+		}
+		catch(ClassNotFoundException | IOException e)
+		{
+			throw new MyceliaRuntimeException(e);
+		}
 	}
 
 	@Override
@@ -76,22 +123,41 @@ public class RemoteSlaveNodeImpl implements RemoteSlaveNode
 	@Override
 	public Object getTaskResult(int taskInstanceId)
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<TaskInstance> getRunningTaskInstance()
-	{
-		// TODO Auto-generated method stub
-		return null;
+		String opcode=SandboxOpcodes.GET_RESULT_REQUEST_SLAVE;
+		
+		try
+		{
+			localThreadNode.sendTransmission(opcode, remoteNodeId, atomConverter.toAtom(taskInstanceId));
+			
+			Transmission answer=localThreadNode.receiveFrameworkAnswerTransmission(
+					SandboxOpcodes.GET_RESULT_ANSWER_SLAVE, DEFAULT_TIMOUT);
+			
+			if(answer==null)
+				throw new MyceliaTimeoutException("Timeout while waiting for slave node to answer.");
+			
+			return atomConverter.fromAtomInferType(answer.getAtoms().get(0));
+		}
+		catch(ClassNotFoundException | IOException e)
+		{
+			throw new MyceliaRuntimeException(e);
+		}
 	}
 
 	@Override
 	public boolean isTaskInstanceDone(int taskInstanceId)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		String opcode=SandboxOpcodes.IS_TASK_DONE_REQUEST_SLAVE;
+		
+		localThreadNode.sendTransmission(opcode, remoteNodeId, atomConverter.toAtom(taskInstanceId));
+		
+		Transmission answer=localThreadNode.receiveFrameworkAnswerTransmission(
+				SandboxOpcodes.IS_TASK_DONE_ANSWER_SLAVE, DEFAULT_TIMOUT);
+		
+		if(answer==null)
+			throw new MyceliaTimeoutException("Timeout while waiting for slave node to answer.");
+		
+		
+		return atomConverter.getAsBoolean(answer.getAtoms().get(0));
 	}
 
 	@Override
@@ -103,7 +169,21 @@ public class RemoteSlaveNodeImpl implements RemoteSlaveNode
 	@Override
 	public TaskInstance getTaskInstance(int taskInstanceId)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		String opcode=SandboxOpcodes.GET_TASK_INSTANCE_REQUEST_SLAVE;
+		
+		localThreadNode.sendTransmission(opcode, remoteNodeId, atomConverter.toAtom(taskInstanceId));
+		
+		Transmission answer=localThreadNode.receiveFrameworkAnswerTransmission(
+				SandboxOpcodes.GET_TASK_INSTANCE_ANSWER_SLAVE, DEFAULT_TIMOUT);
+		
+		if(answer==null)
+			throw new MyceliaTimeoutException("Timeout while waiting for slave node to answer.");
+		
+		TaskInstance taskInstance=new TaskInstance();
+		taskInstance.setInstanceId(taskInstanceId);
+		taskInstance.setNodeId(remoteNodeId);
+		taskInstance.setTask(new Task(atomConverter.getAsString(answer.getAtoms().get(0))));
+		
+		return taskInstance;
 	}
 }

@@ -1,7 +1,6 @@
 package com.mycelia.sandbox.testapp;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,7 +40,7 @@ public class SlaveNode extends MyceliaSlaveNode
 				int exponent=(Integer)parameters[1];
 			
 				logger.info("Slave ID "+getNodeId()+" got calculate task with base "+base+" and exponent "+exponent);
-				int result=(int)Math.pow(base, exponent);
+				double result=Math.pow(base, exponent);
 				logger.info("Slave ID "+getNodeId()+" "+base+"^"+exponent+"="+result);
 				
 				return result;

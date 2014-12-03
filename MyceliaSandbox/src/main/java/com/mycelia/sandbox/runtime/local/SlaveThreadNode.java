@@ -2,8 +2,8 @@ package com.mycelia.sandbox.runtime.local;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.mycelia.sandbox.communication.AtomConverter;
 import com.mycelia.sandbox.communication.bean.Atom;
@@ -12,6 +12,7 @@ import com.mycelia.sandbox.constants.Constants;
 import com.mycelia.sandbox.constants.SandboxOpcodes;
 import com.mycelia.sandbox.framework.MyceliaSlaveNode;
 import com.mycelia.sandbox.framework.Task;
+import com.mycelia.sandbox.framework.TaskInstance;
 
 public class SlaveThreadNode extends ThreadNode
 {
@@ -44,11 +45,114 @@ public class SlaveThreadNode extends ThreadNode
 	{
 		if(transmission.getOpcode().equals(SandboxOpcodes.START_TASK_REQUEST_SLAVE))
 			startTaskFrameworkAction(transmission);
+		else if(transmission.getOpcode().equals(SandboxOpcodes.GET_RESULT_REQUEST_SLAVE))
+			getTaskResultFrameworkAction(transmission);
+		else if(transmission.getOpcode().equals(SandboxOpcodes.GET_TASK_INSTANCE_REQUEST_SLAVE))
+			getTaskInstanceFrameworkAction(transmission);
+		else if(transmission.getOpcode().equals(SandboxOpcodes.IS_TASK_DONE_REQUEST_SLAVE))
+			isTaskDoneFrameworkAction(transmission);
+		else if(transmission.getOpcode().equals(SandboxOpcodes.GET_TASKS_REQUEST_SLAVE))
+			getTasksFrameworkAction(transmission);
+		else if(transmission.getOpcode().equals(SandboxOpcodes.GET_RUNNING_TASKS_REQUEST_SLAVE))
+			getRunningTasksFrameworkAction(transmission);
 	}
 	
 	private void sendGenericError(String toNodeId, String message)
 	{
 		sendTransmission(SandboxOpcodes.GENERIC_ERROR, toNodeId, atomConverter.toAtom(message));
+	}
+	
+	private void getRunningTasksFrameworkAction(Transmission transmission)
+	{
+		Set<TaskInstance> tasks=node.getRunningTaskInstances();
+	
+		try
+		{
+			//Answer back task instance ID
+			Transmission answer=new Transmission();
+			answer.setOpcode(SandboxOpcodes.GET_RESULT_ANSWER_SLAVE);
+			answer.setTo(transmission.getFrom());
+			
+			for(TaskInstance task: tasks)
+			{
+				answer.addAtom(atomConverter.toAtom(task));
+			}
+			
+			sendTransmission(answer);
+		}
+		catch(IOException e)
+		{
+			sendGenericError(transmission.getFrom(), "Exception: "+e.getMessage());
+		}
+	}
+	
+	private void getTasksFrameworkAction(Transmission transmission)
+	{
+		Set<Task> tasks=node.getTasks();
+		
+		//Answer back task instance ID
+		Transmission answer=new Transmission();
+		answer.setOpcode(SandboxOpcodes.GET_RESULT_ANSWER_SLAVE);
+		answer.setTo(transmission.getFrom());
+		
+		for(Task task: tasks)
+		{
+			answer.addAtom(atomConverter.toAtom(task.getName()));
+		}
+		
+		sendTransmission(answer);
+	}
+	
+	private void isTaskDoneFrameworkAction(Transmission transmission)
+	{
+		int taskInstanceId=atomConverter.getAsInt(transmission.getAtoms().get(0));
+		
+		boolean isDone=node.isTaskInstanceDone(taskInstanceId);
+		
+		//Answer back task instance ID
+		Transmission answer=new Transmission();
+		answer.setOpcode(SandboxOpcodes.IS_TASK_DONE_ANSWER_SLAVE);
+		answer.setTo(transmission.getFrom());
+		answer.addAtom(atomConverter.toAtom(isDone));
+		
+		sendTransmission(answer);
+	}
+	
+	private void getTaskInstanceFrameworkAction(Transmission transmission)
+	{
+		int taskInstanceId=atomConverter.getAsInt(transmission.getAtoms().get(0));
+		
+		TaskInstance taskInstance=node.getTaskInstance(taskInstanceId);
+		
+		//Answer back task instance ID
+		Transmission answer=new Transmission();
+		answer.setOpcode(SandboxOpcodes.GET_TASK_INSTANCE_ANSWER_SLAVE);
+		answer.setTo(transmission.getFrom());
+		answer.addAtom(atomConverter.toAtom(taskInstance.getTask().getName()));
+		
+		sendTransmission(answer);
+	}
+	
+	private void getTaskResultFrameworkAction(Transmission transmission)
+	{
+		int taskInstanceId=atomConverter.getAsInt(transmission.getAtoms().get(0));
+		
+		Serializable result=node.getTaskResult(taskInstanceId);
+		
+		//Answer back task instance ID
+		try
+		{
+			Transmission answer=new Transmission();
+			answer.setOpcode(SandboxOpcodes.GET_RESULT_ANSWER_SLAVE);
+			answer.setTo(transmission.getFrom());
+			answer.addAtom(atomConverter.toAtomInferType(result));
+			
+			sendTransmission(answer);
+		}
+		catch(IOException e)
+		{
+			sendGenericError(transmission.getFrom(), "Exception: "+e.getMessage());
+		}
 	}
 	
 	private void startTaskFrameworkAction(Transmission transmission)

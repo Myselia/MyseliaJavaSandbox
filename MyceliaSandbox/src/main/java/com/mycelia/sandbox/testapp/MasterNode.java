@@ -1,12 +1,15 @@
 package com.mycelia.sandbox.testapp;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mycelia.sandbox.framework.MyceliaMasterNode;
 import com.mycelia.sandbox.framework.Task;
+import com.mycelia.sandbox.framework.TaskInstance;
 import com.mycelia.sandbox.shared.SharedUtil;
 
 public class MasterNode extends MyceliaMasterNode
@@ -26,6 +29,9 @@ public class MasterNode extends MyceliaMasterNode
 			Random random=new Random();
 			int base;
 			int exponent;
+			double result;
+			TaskInstance taskInstance;
+			Set<TaskInstance> startedTasks=new HashSet<TaskInstance>();
 			
 			try
 			{
@@ -34,11 +40,25 @@ public class MasterNode extends MyceliaMasterNode
 					if(isInterrupted())
 						throw new InterruptedException();
 					
-					base=random.nextInt(1000);
-					exponent=random.nextInt(1000);
+					for(int i=0; i<5; i++)
+					{
+						base=random.nextInt(100);
+						exponent=random.nextInt(100);
+						
+						taskInstance=startTaskOnAnyNode(new Task("calculate"), base, exponent);
+						logger.info("Started task "+taskInstance.getNodeId()+"-"+taskInstance.getInstanceId()+
+								" calculate with base "+base+" and exponent "+exponent);
+						
+						startedTasks.add(taskInstance);
+					}
 					
-					logger.info("Starting new task calculate with base "+base+" and exponent "+exponent);
-					startTaskOnAnyNode(new Task("calculate"), base, exponent);
+					Thread.sleep(500); //sleep for half a second
+					
+					for(TaskInstance task: startedTasks)
+					{
+						result=(Double)getRemoteSlaveNode(task.getNodeId()).getTaskResult(task.getInstanceId());
+						logger.info("Task "+task.getNodeId()+"-"+task.getInstanceId()+" yields result: "+result);
+					}
 					
 					sleep(WAIT_TIME);
 				}
@@ -46,6 +66,7 @@ public class MasterNode extends MyceliaMasterNode
 			catch(InterruptedException e)
 			{
 				//Let the thread finish if we receive interrupt.
+				logger.debug("DoWorkThread interrupted, here we die.");
 			}
 		}
 	}
@@ -58,6 +79,7 @@ public class MasterNode extends MyceliaMasterNode
 		createSlaveNodes(5);
 		
 		thread=new DoWorkThread();
+		thread.setName("Master DoWorkThread");
 		thread.start();
 	}
 
