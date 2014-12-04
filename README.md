@@ -2,4 +2,4 @@ MyceliaSandbox
 ==============
 Application building, testing, and deployment suite
 
-See the [wiki](wiki) for more information about the Mycelia Sandbox.
+See the [wiki](//github.com/TheOrangeDuke/MyceliaSandbox/wiki) for more information about the Mycelia Sandbox.
