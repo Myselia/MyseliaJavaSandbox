@@ -5,8 +5,16 @@ import java.util.Set;
 
 import com.mycelia.sandbox.exception.MyceliaRuntimeException;
 
+/**
+ * Interface through which a node can perform operations on a specific slave node.
+ * 
+ * For each call to a method in this class, the RemoteSlaveNode communicates
+ * with the slave node it represents by sending it framework specific messages.
+ * The slave node will then obey those messages by performing the required action and/or
+ * returning information about itself.
+ */
 public interface RemoteSlaveNode
-{	
+{
 	/**
 	 * Gets the different tasks this node can perform.
 	 */
@@ -52,5 +60,8 @@ public interface RemoteSlaveNode
 	 */
 	public boolean isTaskInstanceDone(int taskInstanceId);
 
+	/**
+	 * Get this node's ID.
+	 */
 	public String getNodeId();
 }

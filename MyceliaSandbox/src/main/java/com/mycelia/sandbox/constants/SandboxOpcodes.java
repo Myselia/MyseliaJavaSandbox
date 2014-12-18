@@ -1,5 +1,8 @@
 package com.mycelia.sandbox.constants;
 
+/**
+ * Transmission opcodes used by the Sandbox.
+ */
 public class SandboxOpcodes
 {
 	//General

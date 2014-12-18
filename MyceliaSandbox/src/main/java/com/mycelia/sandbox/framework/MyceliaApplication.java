@@ -5,6 +5,16 @@ import com.mycelia.sandbox.runtime.ApplicationRuntimeFactory;
 import com.mycelia.sandbox.runtime.ApplicationRuntimeType;
 import com.mycelia.sandbox.runtime.LoadBalancerStrategy;
 
+/**
+ * Mycelia application.
+ * 
+ * Provided a MyceliaMasterNode class and a MyceliaSlaveNode class,
+ * this class will construct a Mycelia application that can be executed
+ * by the Mycelia Runtime. 
+ *
+ * @param <M> Application's MyceliaMasterNode type. 
+ * @param <S> Application's MyceliaSlaveNode type.
+ */
 public class MyceliaApplication<M extends MyceliaMasterNode, S extends MyceliaSlaveNode>
 {
 	private Class<M> masterModule;
@@ -13,6 +23,18 @@ public class MyceliaApplication<M extends MyceliaMasterNode, S extends MyceliaSl
 	private LoadBalancerStrategy strategy;
 	private ApplicationRuntime applicationRuntime;
 	
+	/**
+	 * Creates a Mycelia application given a MyceliaMasterNode class and a MyceliaSlaveNode class.
+	 * 
+	 * This will create a Mycelia application with runtime type Local and
+	 * load balancer strategy Round robin.
+	 * 
+	 * @param masterModule
+	 * 			Application's MyceliaMasterNode class.
+	 * 
+	 * @param slaveModule
+	 * 			Application's MyceliaSlaveNode class.
+	 */
 	public MyceliaApplication(Class<M> masterModule, Class<S> slaveModule)
 	{
 		this.masterModule=masterModule;
@@ -22,6 +44,9 @@ public class MyceliaApplication<M extends MyceliaMasterNode, S extends MyceliaSl
 		strategy=LoadBalancerStrategy.ROUND_ROBIN;
 	}
 	
+	/**
+	 * Sets the runtime type that must be used to run this application.
+	 */
 	public void setRuntimeType(ApplicationRuntimeType runtimeType)
 	{
 		if(runtimeType==null)
@@ -30,6 +55,9 @@ public class MyceliaApplication<M extends MyceliaMasterNode, S extends MyceliaSl
 		this.runtimeType=runtimeType;
 	}
 	
+	/**
+	 * Sets the load balancing strategy to be used in this application.
+	 */
 	public void setLoadBalancerStrategy(LoadBalancerStrategy strategy)
 	{
 		if(strategy==null)
@@ -40,6 +68,7 @@ public class MyceliaApplication<M extends MyceliaMasterNode, S extends MyceliaSl
 	
 	/**
 	 * Starts the Mycelia application.
+	 * 
 	 * This will create and start the master node.
 	 */
 	public void start()
@@ -55,6 +84,7 @@ public class MyceliaApplication<M extends MyceliaMasterNode, S extends MyceliaSl
 	
 	/**
 	 * Stops the Mycelia application.
+	 * 
 	 * This will delete the master node and all slave nodes;
 	 * stopping all nodes and releasing all resources. 
 	 */

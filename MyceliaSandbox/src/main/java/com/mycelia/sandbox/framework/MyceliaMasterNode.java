@@ -6,6 +6,12 @@ import java.util.Set;
 import com.mycelia.sandbox.runtime.LoadBalancer;
 import com.mycelia.sandbox.runtime.NodeContainer;
 
+/**
+ * The Mycelia Master node is the single node that manages the slave nodes.
+ * 
+ * The Master node is tasked to mange the number of nodes present in the Mycelia application.
+ * It can start new tasks on the slave nodes and get the tasks' results.
+ */
 public abstract class MyceliaMasterNode extends MyceliaNode
 {
 	private NodeContainer nodeContainer;
@@ -69,7 +75,10 @@ public abstract class MyceliaMasterNode extends MyceliaNode
 	}
 	
 	/**
-	 * Gets the <code>RemoteSlaveNode</code> object associated with the specified node ID.  
+	 * Gets the <code>RemoteSlaveNode</code> object associated with the specified node ID.
+	 * 
+	 * The <code>RemoteSlaveNode</code> class is an interface to
+	 * performs operations on a running slave node instance.
 	 */
 	protected final RemoteSlaveNode getRemoteSlaveNode(String nodeId)
 	{

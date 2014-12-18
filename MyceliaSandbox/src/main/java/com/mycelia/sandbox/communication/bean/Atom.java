@@ -1,9 +1,20 @@
 package com.mycelia.sandbox.communication.bean;
 
+/**
+ * A single object that is part of a <code>Transmission</code>.
+ */
 public class Atom
 {
 	private String atomType;
+	
+	/**
+	 * Class of the atom's content.
+	 */
 	private String atomClass;
+	
+	/**
+	 * Content value that can be deserialized into an object.
+	 */
 	private String content;
 
 	public Atom(String atomType, String atomClass)
@@ -12,7 +23,7 @@ public class Atom
 		this.atomClass=atomClass;
 	}
 
-	public void addContent(String content)
+	public void setContent(String content)
 	{
 		this.content=content;
 	}

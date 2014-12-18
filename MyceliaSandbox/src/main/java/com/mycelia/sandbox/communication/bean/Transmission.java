@@ -3,12 +3,39 @@ package com.mycelia.sandbox.communication.bean;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * A specific message sent from one MyceliaNode to another.
+ */
 public class Transmission
 {
+	/**
+	 * The ID of the Transaction.
+	 * 
+	 * This is a unique identifier for this specific instance of transmission.
+	 * If a message is transmitted twice with the same content, it is going to
+	 * have a different Transmission ID.
+	 */
 	private String id;
+	
+	/**
+	 * The Node ID of the Node that sent this transmission.
+	 */
 	private String from;
+	
+	/**
+	 * The Node ID of the intended recipient of this transmission. 
+	 */
 	private String to;
+	
+	/**
+	 * The opcode describing more specifically how this message should be interpreted
+	 * at the Node level once received.
+	 */
 	private String opcode;
+	
+	/**
+	 * List of Atom object representing the content of the message.
+	 */
 	private List<Atom> atoms;
 
 	public Transmission()

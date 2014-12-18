@@ -1,5 +1,9 @@
 package com.mycelia.sandbox.constants;
 
+/**
+ * Transmission opcode prefixes for the different part of the Mycelia Framework.
+ * This also lists opcodes category prefixes.
+ */
 public class OpcodePrefix
 {
 	//X00 opcode prefixes

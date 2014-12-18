@@ -9,8 +9,20 @@ import java.util.Set;
 import com.mycelia.sandbox.runtime.LoadBalancer;
 import com.mycelia.sandbox.runtime.NodeContainer;
 
+/**
+ * A MyceliaNode processing part of the Mycelia Application payload.
+ * 
+ * The MyceliaSlaveNode is a node that can perform multiple tasks
+ * on request from any other MyceliaNode (usually the MyceliaMasterNode).
+ * Multiple MyceliaSlaveNode can be running at the same time in the MyceliaApplication.
+ * MyceliaSlaveNodes can be started and stopped on request by the framework, all under the
+ * supervision of the MyceliaMasterNode.
+ */
 public abstract class MyceliaSlaveNode extends MyceliaNode
 {
+	/**
+	 * A thread executing the code for a TaskInstance.
+	 */
 	public class TaskInstanceThread extends Thread
 	{
 		private Serializable result;
@@ -42,9 +54,31 @@ public abstract class MyceliaSlaveNode extends MyceliaNode
 		}
 	}
 	
+	/**
+	 * A map of all the TaskInstance that have been started on this node.
+	 * 
+	 * The map is mapping the TaskInstance's ID (key) to their TaskInstance object (value).
+	 */
 	private Map<Integer, TaskInstance> startedTasks;
+	
+	/**
+	 * A map of all the TaskInstanceThread that have been started on this node.
+	 * 
+	 * The map is mapping the TaskInstance object (key) to their related thread object (value).
+	 */
 	private Map<TaskInstance, TaskInstanceThread> startedThreads;
+	
+	/**
+	 * The thread group to which all TaskInstanceThread belongs too.
+	 * 
+	 * This thread group is used to monitor the running task instance threads
+	 * at a specific moment in time.  
+	 */
 	private ThreadGroup threadGroup;
+	
+	/**
+	 * The last task instance ID used; for generating new unique task instance IDs.
+	 */
 	private int lastTaskInstanceId;
 	
 	//Methods provided by Mycelia framework.
@@ -68,6 +102,9 @@ public abstract class MyceliaSlaveNode extends MyceliaNode
 		//We just override this with "final" so children cant access the LoadBalancer.
 	}
 	
+	/**
+	 * Generates a new unique task instance ID.
+	 */
 	private int getNewTaskInstanceId()
 	{
 		lastTaskInstanceId++;

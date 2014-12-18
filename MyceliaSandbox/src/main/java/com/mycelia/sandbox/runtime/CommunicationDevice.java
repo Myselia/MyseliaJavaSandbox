@@ -2,6 +2,9 @@ package com.mycelia.sandbox.runtime;
 
 import com.mycelia.sandbox.communication.bean.Transmission;
 
+/**
+ * This is the interface that takes care of communication for a MyceliaNode.
+ */
 public interface CommunicationDevice
 {
 	/**
