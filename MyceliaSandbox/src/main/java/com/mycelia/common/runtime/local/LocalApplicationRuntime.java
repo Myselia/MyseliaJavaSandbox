@@ -1,12 +1,12 @@
-package com.mycelia.sandbox.runtime.local;
+package com.mycelia.common.runtime.local;
 
-import com.mycelia.sandbox.framework.MyceliaMasterNode;
-import com.mycelia.sandbox.framework.MyceliaSlaveNode;
-import com.mycelia.sandbox.runtime.ApplicationRuntime;
-import com.mycelia.sandbox.runtime.LoadBalancer;
-import com.mycelia.sandbox.runtime.LoadBalancerFactory;
-import com.mycelia.sandbox.runtime.LoadBalancerStrategy;
-import com.mycelia.sandbox.runtime.NodeContainer;
+import com.mycelia.common.framework.MyceliaMasterNode;
+import com.mycelia.common.framework.MyceliaSlaveNode;
+import com.mycelia.common.runtime.ApplicationRuntime;
+import com.mycelia.common.runtime.LoadBalancer;
+import com.mycelia.common.runtime.LoadBalancerFactory;
+import com.mycelia.common.runtime.LoadBalancerStrategy;
+import com.mycelia.common.runtime.NodeContainer;
 
 public class LocalApplicationRuntime implements ApplicationRuntime
 {

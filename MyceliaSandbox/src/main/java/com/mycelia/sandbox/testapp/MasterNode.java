@@ -7,10 +7,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mycelia.sandbox.framework.MyceliaMasterNode;
-import com.mycelia.sandbox.framework.Task;
-import com.mycelia.sandbox.framework.TaskInstance;
-import com.mycelia.sandbox.shared.SharedUtil;
+import com.mycelia.common.framework.MyceliaMasterNode;
+import com.mycelia.common.framework.Task;
+import com.mycelia.common.framework.TaskInstance;
+import com.mycelia.common.generic.GenericUtil;
 
 public class MasterNode extends MyceliaMasterNode
 {
@@ -88,6 +88,6 @@ public class MasterNode extends MyceliaMasterNode
 	{
 		thread.interrupt();
 		
-		SharedUtil.joindIgnoreInterrupts(thread);
+		GenericUtil.joindIgnoreInterrupts(thread);
 	}
 }

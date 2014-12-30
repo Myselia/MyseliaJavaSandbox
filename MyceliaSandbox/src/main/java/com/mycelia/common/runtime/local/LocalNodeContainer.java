@@ -1,4 +1,4 @@
-package com.mycelia.sandbox.runtime.local;
+package com.mycelia.common.runtime.local;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,17 +8,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.mycelia.sandbox.communication.bean.Atom;
-import com.mycelia.sandbox.communication.bean.Transmission;
+import com.mycelia.common.communication.bean.Atom;
+import com.mycelia.common.communication.bean.Transmission;
 import com.mycelia.sandbox.constants.SandboxOpcodes;
-import com.mycelia.sandbox.exception.MyceliaRuntimeException;
-import com.mycelia.sandbox.framework.MyceliaMasterNode;
-import com.mycelia.sandbox.framework.MyceliaNode;
-import com.mycelia.sandbox.framework.MyceliaSlaveNode;
-import com.mycelia.sandbox.framework.RemoteSlaveNode;
-import com.mycelia.sandbox.runtime.LoadBalancer;
-import com.mycelia.sandbox.runtime.NodeContainer;
-import com.mycelia.sandbox.shared.SharedUtil;
+import com.mycelia.common.exception.MyceliaRuntimeException;
+import com.mycelia.common.framework.MyceliaMasterNode;
+import com.mycelia.common.framework.MyceliaNode;
+import com.mycelia.common.framework.MyceliaSlaveNode;
+import com.mycelia.common.framework.RemoteSlaveNode;
+import com.mycelia.common.generic.GenericUtil;
+import com.mycelia.common.runtime.LoadBalancer;
+import com.mycelia.common.runtime.NodeContainer;
 
 public class LocalNodeContainer implements NodeContainer
 {
@@ -122,7 +122,7 @@ public class LocalNodeContainer implements NodeContainer
 		
 		localThreadNode.sendTransmission(SandboxOpcodes.STOP, masterNodeId, new ArrayList<Atom>(0));
 		
-		SharedUtil.joindIgnoreInterrupts(remoteThreadNode);
+		GenericUtil.joindIgnoreInterrupts(remoteThreadNode);
 		
 		deleteAllSlaveNodes(localNodeId);
 	}
@@ -186,7 +186,7 @@ public class LocalNodeContainer implements NodeContainer
 		
 		localThreadNode.sendTransmission(SandboxOpcodes.STOP, remoteNodeId, new ArrayList<Atom>(0));
 		
-		SharedUtil.joindIgnoreInterrupts(remoteThreadNode);
+		GenericUtil.joindIgnoreInterrupts(remoteThreadNode);
 	}
 
 	@Override
@@ -218,7 +218,7 @@ public class LocalNodeContainer implements NodeContainer
 		}
 		
 		for(ThreadNode threadNode: stoppedNodes)
-			SharedUtil.joindIgnoreInterrupts(threadNode);
+			GenericUtil.joindIgnoreInterrupts(threadNode);
 	}
 
 	@Override

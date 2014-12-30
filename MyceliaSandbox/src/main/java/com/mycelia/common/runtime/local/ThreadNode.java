@@ -1,4 +1,4 @@
-package com.mycelia.sandbox.runtime.local;
+package com.mycelia.common.runtime.local;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -7,12 +7,12 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mycelia.sandbox.communication.bean.Atom;
-import com.mycelia.sandbox.communication.bean.Transmission;
-import com.mycelia.sandbox.constants.OpcodePrefix;
+import com.mycelia.common.communication.bean.Atom;
+import com.mycelia.common.communication.bean.Transmission;
+import com.mycelia.common.constants.OpcodePrefix;
 import com.mycelia.sandbox.constants.SandboxOpcodes;
-import com.mycelia.sandbox.framework.MyceliaNode;
-import com.mycelia.sandbox.runtime.CommunicationDevice;
+import com.mycelia.common.framework.MyceliaNode;
+import com.mycelia.common.runtime.CommunicationDevice;
 
 /**
  * A node running on a Thread (as opposed to a network node).

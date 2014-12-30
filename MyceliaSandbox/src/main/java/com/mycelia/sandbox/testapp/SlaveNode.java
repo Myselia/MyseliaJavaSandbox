@@ -7,8 +7,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mycelia.sandbox.framework.MyceliaSlaveNode;
-import com.mycelia.sandbox.framework.Task;
+import com.mycelia.common.framework.MyceliaSlaveNode;
+import com.mycelia.common.framework.Task;
 
 public class SlaveNode extends MyceliaSlaveNode
 {

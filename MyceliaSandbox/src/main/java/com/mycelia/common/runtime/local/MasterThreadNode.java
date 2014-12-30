@@ -1,8 +1,8 @@
-package com.mycelia.sandbox.runtime.local;
+package com.mycelia.common.runtime.local;
 
-import com.mycelia.sandbox.communication.bean.Transmission;
+import com.mycelia.common.communication.bean.Transmission;
 import com.mycelia.sandbox.constants.Constants;
-import com.mycelia.sandbox.framework.MyceliaMasterNode;
+import com.mycelia.common.framework.MyceliaMasterNode;
 
 public class MasterThreadNode extends ThreadNode
 {

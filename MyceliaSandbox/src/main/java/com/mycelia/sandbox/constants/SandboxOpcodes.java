@@ -1,5 +1,7 @@
 package com.mycelia.sandbox.constants;
 
+import com.mycelia.common.constants.OpcodePrefix;
+
 /**
  * Transmission opcodes used by the Sandbox.
  */

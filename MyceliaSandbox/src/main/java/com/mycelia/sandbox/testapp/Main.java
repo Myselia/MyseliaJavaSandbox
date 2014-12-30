@@ -3,7 +3,7 @@ package com.mycelia.sandbox.testapp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mycelia.sandbox.framework.MyceliaApplication;
+import com.mycelia.common.framework.MyceliaApplication;
 
 public class Main
 {

@@ -1,18 +1,18 @@
-package com.mycelia.sandbox.runtime.local;
+package com.mycelia.common.runtime.local;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-import com.mycelia.sandbox.communication.AtomConverter;
-import com.mycelia.sandbox.communication.bean.Atom;
-import com.mycelia.sandbox.communication.bean.Transmission;
+import com.mycelia.common.communication.AtomConverter;
+import com.mycelia.common.communication.bean.Atom;
+import com.mycelia.common.communication.bean.Transmission;
 import com.mycelia.sandbox.constants.Constants;
 import com.mycelia.sandbox.constants.SandboxOpcodes;
-import com.mycelia.sandbox.framework.MyceliaSlaveNode;
-import com.mycelia.sandbox.framework.Task;
-import com.mycelia.sandbox.framework.TaskInstance;
+import com.mycelia.common.framework.MyceliaSlaveNode;
+import com.mycelia.common.framework.Task;
+import com.mycelia.common.framework.TaskInstance;
 
 public class SlaveThreadNode extends ThreadNode
 {
