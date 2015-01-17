@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 
 import com.mycelia.common.framework.MyceliaApplication;
 
-public class Main
+public class TestAppMain
 {
-	private static Logger logger=LoggerFactory.getLogger(Main.class);
+	private static Logger logger=LoggerFactory.getLogger(TestAppMain.class);
 	
 	public static void main(String[] args) throws InterruptedException
 	{
