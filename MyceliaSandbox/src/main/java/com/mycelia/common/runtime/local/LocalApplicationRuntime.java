@@ -1,5 +1,7 @@
 package com.mycelia.common.runtime.local;
 
+import java.util.Map;
+
 import com.mycelia.common.framework.MyceliaMasterNode;
 import com.mycelia.common.framework.MyceliaSlaveNode;
 import com.mycelia.common.runtime.ApplicationRuntime;
@@ -55,5 +57,11 @@ public class LocalApplicationRuntime implements ApplicationRuntime
 	public LoadBalancer getLoadBalancer()
 	{
 		return loadBalancer;
+	}
+
+	@Override
+	public void setOptions(Map<String, Object> options)
+	{
+		//Do Nothing (no runtime specific options for LOCAL runtime)
 	}
 }

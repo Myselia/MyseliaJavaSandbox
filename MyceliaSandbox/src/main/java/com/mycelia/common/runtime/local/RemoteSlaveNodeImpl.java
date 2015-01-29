@@ -10,7 +10,7 @@ import java.util.Set;
 import com.mycelia.common.communication.AtomConverter;
 import com.mycelia.common.communication.bean.Atom;
 import com.mycelia.common.communication.bean.Transmission;
-import com.mycelia.sandbox.constants.SandboxOpcodes;
+import com.mycelia.common.constants.SandboxOpcodes;
 import com.mycelia.common.exception.MyceliaRuntimeException;
 import com.mycelia.common.exception.MyceliaTimeoutException;
 import com.mycelia.common.framework.RemoteSlaveNode;
