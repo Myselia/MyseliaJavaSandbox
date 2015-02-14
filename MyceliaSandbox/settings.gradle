@@ -1,2 +1,0 @@
-include 'MyceliaCommon'
-project(':MyceliaCommon').setProjectDir(new File('../../MyceliaCommon/MyceliaCommon/'))
