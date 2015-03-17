@@ -1,5 +1,6 @@
 package com.mycelia.sandbox.runtime.network;
 
+import com.mycelia.common.communication.ComponentCommunicator;
 import com.mycelia.sandbox.constants.MyceliaModuleType;
 import com.mycelia.sandbox.runtime.MyceliaRuntime;
 import com.mycelia.sandbox.runtime.templates.MyceliaMasterModule;
@@ -11,7 +12,10 @@ public class NetworkRuntime extends MyceliaRuntime {
 	private Thread myceliaModuleThread;
 	private MyceliaModule module;
 	private MyceliaModuleType moduleType;
-	private CommunicationEndpoint communicationendpoint;
+	
+	private Thread communicatorThread;
+	private ComponentCommunicator componentcommunicator;
+	
 	
 	public <M extends MyceliaMasterModule, S extends MyceliaSlaveModule> NetworkRuntime(Class<M> masterModule, Class<S> slaveModule){
 		super(masterModule, slaveModule);
@@ -27,7 +31,10 @@ public class NetworkRuntime extends MyceliaRuntime {
 			System.err.println("no master/slave type invoked");
 			return;
 		} else {
-			communicationendpoint = new CommunicationEndpoint();
+			componentcommunicator = new ComponentCommunicator();
+			communicatorThread = new Thread(componentcommunicator);
+			communicatorThread.start();
+			
 			try{
 				if(moduleType.equals(MyceliaModuleType.MASTER)){
 					module = masterModuleClass.newInstance();
