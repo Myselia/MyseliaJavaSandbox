@@ -1,9 +1,8 @@
-package com.mycelia.sandbox.runtime;
+package com.mycelia.sandbox.runtime.templates;
 
 import com.mycelia.common.framework.TaskInstance;
 import com.mycelia.common.framework.communication.Message;
 import com.mycelia.sandbox.constants.MyceliaModuleType;
-import com.mycelia.sandbox.runtime.templates.MyceliaModule;
 
 public abstract class MyceliaMasterModule extends MyceliaModule implements Runnable{
 	

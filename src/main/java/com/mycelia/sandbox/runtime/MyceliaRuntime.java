@@ -1,7 +1,8 @@
-package com.mycelia.sandbox.runtime.templates;
+package com.mycelia.sandbox.runtime;
 
-import com.mycelia.sandbox.runtime.MyceliaMasterModule;
-import com.mycelia.sandbox.runtime.MyceliaSlaveModule;
+import com.mycelia.sandbox.runtime.templates.MyceliaMasterModule;
+import com.mycelia.sandbox.runtime.templates.MyceliaSlaveModule;
+
 
 /**
  * MyceliaRuntime
@@ -29,6 +30,11 @@ public abstract class MyceliaRuntime {
 	 * instantiates the appropriate classes for the runtime
 	 */
 	public abstract void initialize();
+	
+	/**
+	 * begins execution of the thread(s) for the specific runtime
+	 */
+	public abstract void start();
 	
 	/**
 	 * end finished all communication and releases resources at the end of runtime

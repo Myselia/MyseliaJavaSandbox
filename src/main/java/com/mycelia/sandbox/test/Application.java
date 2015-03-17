@@ -2,7 +2,7 @@ package com.mycelia.sandbox.test;
 
 import com.mycelia.sandbox.constants.MyceliaModuleType;
 import com.mycelia.sandbox.constants.MyceliaRuntimeType;
-import com.mycelia.sandbox.runtime.MyceliaApplication;
+import com.mycelia.sandbox.runtime.templates.MyceliaApplication;
 
 public class Application {
 	

@@ -1,6 +1,6 @@
 package com.mycelia.sandbox.test;
 
-import com.mycelia.sandbox.runtime.MyceliaMasterModule;
+import com.mycelia.sandbox.runtime.templates.MyceliaMasterModule;
 
 public class Master extends MyceliaMasterModule{	
 

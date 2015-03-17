@@ -3,10 +3,10 @@ package com.mycelia.sandbox.runtime.local;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.mycelia.sandbox.runtime.MyceliaMasterModule;
-import com.mycelia.sandbox.runtime.MyceliaSlaveModule;
+import com.mycelia.sandbox.runtime.MyceliaRuntime;
+import com.mycelia.sandbox.runtime.templates.MyceliaMasterModule;
 import com.mycelia.sandbox.runtime.templates.MyceliaModule;
-import com.mycelia.sandbox.runtime.templates.MyceliaRuntime;
+import com.mycelia.sandbox.runtime.templates.MyceliaSlaveModule;
 
 public class LocalRuntime extends MyceliaRuntime {
 	
@@ -20,6 +20,7 @@ public class LocalRuntime extends MyceliaRuntime {
 	//Slave Modules Execution
 	private int slaveCount = 0;
 	private MyceliaModule[] slaveModuleArray;
+	private Thread[] slaveModuleThreadArray;
 	private ExecutorService threadPool;
 	
 	public <M extends MyceliaMasterModule, S extends MyceliaSlaveModule> LocalRuntime(Class<M> masterModule, Class<S> slaveModule){
@@ -49,7 +50,7 @@ public class LocalRuntime extends MyceliaRuntime {
 				slaveModuleArray = new MyceliaModule[slaveCount];
 				for(int i = 0; i < slaveCount; i++){
 					slaveModuleArray[i] = slaveModuleClass.newInstance();
-					this.threadPool.execute(slaveModuleArray[i]); // SLAVE MODULE THREAD
+					slaveModuleThreadArray[i] = new Thread(slaveModuleArray[i]); // SLAVE MODULE THREAD
 				}
 			} catch (Exception e){
 				e.printStackTrace();
@@ -57,11 +58,21 @@ public class LocalRuntime extends MyceliaRuntime {
 			}
 		}
 	}
+	
+	@Override
+	public void start() {
+		masterModuleThread.start();
+		for(int i = 0; i < slaveCount; i++){
+			this.threadPool.execute(slaveModuleThreadArray[i]);
+		}
+	}
+	
 
 	@Override
 	public void end() {
 		System.out.println("LOCAL RUNTIME END");
 		
 	}
+
 
 }

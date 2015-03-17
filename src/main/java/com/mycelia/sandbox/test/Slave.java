@@ -1,6 +1,6 @@
 package com.mycelia.sandbox.test;
 
-import com.mycelia.sandbox.runtime.MyceliaSlaveModule;
+import com.mycelia.sandbox.runtime.templates.MyceliaSlaveModule;
 
 public class Slave extends MyceliaSlaveModule{
 	

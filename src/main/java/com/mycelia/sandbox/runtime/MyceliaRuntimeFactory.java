@@ -1,10 +1,10 @@
-package com.mycelia.sandbox.runtime.templates;
+package com.mycelia.sandbox.runtime;
 
 import com.mycelia.sandbox.constants.MyceliaRuntimeType;
-import com.mycelia.sandbox.runtime.MyceliaMasterModule;
-import com.mycelia.sandbox.runtime.MyceliaSlaveModule;
 import com.mycelia.sandbox.runtime.local.LocalRuntime;
 import com.mycelia.sandbox.runtime.network.NetworkRuntime;
+import com.mycelia.sandbox.runtime.templates.MyceliaMasterModule;
+import com.mycelia.sandbox.runtime.templates.MyceliaSlaveModule;
 
 public class MyceliaRuntimeFactory {
 
