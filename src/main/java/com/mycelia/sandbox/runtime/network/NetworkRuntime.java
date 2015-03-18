@@ -1,6 +1,7 @@
 package com.mycelia.sandbox.runtime.network;
 
 import com.mycelia.common.communication.ComponentCommunicator;
+import com.mycelia.common.constants.ComponentType;
 import com.mycelia.sandbox.constants.MyceliaModuleType;
 import com.mycelia.sandbox.runtime.MyceliaRuntime;
 import com.mycelia.sandbox.runtime.templates.MyceliaMasterModule;
@@ -31,7 +32,7 @@ public class NetworkRuntime extends MyceliaRuntime {
 			System.err.println("no master/slave type invoked");
 			return;
 		} else {
-			componentcommunicator = new ComponentCommunicator();
+			componentcommunicator = new ComponentCommunicator(componenttranslation(moduleType));
 			communicatorThread = new Thread(componentcommunicator);
 			communicatorThread.start();
 			
@@ -56,6 +57,17 @@ public class NetworkRuntime extends MyceliaRuntime {
 	@Override
 	public void end() {
 		System.out.println("NETWORK RUNTIME END");	
+	}
+	
+	private ComponentType componenttranslation(MyceliaModuleType moduleType){
+		if(moduleType.equals(MyceliaModuleType.MASTER)){
+			return ComponentType.SANDBOXMASTER;
+		} else if(moduleType.equals(MyceliaModuleType.SLAVE)){
+			return ComponentType.SANDBOXSLAVE;
+		} else {
+			System.err.println("no suck component available");
+			return null;
+		}
 	}
 
 
