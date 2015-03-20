@@ -13,8 +13,11 @@ public class Application {
 		MyceliaApplication<Master, Slave> app = new MyceliaApplication<Master, Slave>(Master.class, Slave.class);
 		
 		app.setRuntimeType(MyceliaRuntimeType.NETWORK);
-		app.setSlaveCount(5);
 		app.setModuleType(MyceliaModuleType.MASTER);
+		
+		//app.setRuntimeType(MyceliaRuntimeType.LOCAL);
+		//app.setSlaveCount(5);
+		
 		
 		System.out.println("app started --------------------------------");
 		

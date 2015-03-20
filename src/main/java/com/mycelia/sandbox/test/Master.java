@@ -1,6 +1,6 @@
 package com.mycelia.sandbox.test;
 
-import com.mycelia.common.communication.structures.Message;
+import com.mycelia.common.communication.units.Message;
 import com.mycelia.sandbox.runtime.templates.MyceliaMasterModule;
 
 public class Master extends MyceliaMasterModule{	
