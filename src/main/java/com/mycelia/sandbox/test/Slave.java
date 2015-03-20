@@ -9,13 +9,14 @@ public class Slave extends MyceliaSlaveModule{
 	}
 
 	@Override
-	public void run() {
+	public void setup() {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void setup() {
+	protected void tick() {
 		// TODO Auto-generated method stub
+		
 	}
 
 }

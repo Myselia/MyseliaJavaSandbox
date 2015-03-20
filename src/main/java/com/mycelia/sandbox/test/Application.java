@@ -20,7 +20,7 @@ public class Application {
 		
 		app.start();
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(60000);
 		} catch (InterruptedException e) {
 			System.err.println("application thread error");
 		}

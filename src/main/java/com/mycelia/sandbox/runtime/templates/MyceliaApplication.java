@@ -93,6 +93,7 @@ public class MyceliaApplication <M extends MyceliaMasterModule, S extends Myceli
 		runtime = MyceliaRuntimeFactory.buildRuntime(masterModule, slaveModule, runtimeType);
 		runtimeParameters(runtime);
 		runtime.initialize();
+		runtime.start();
 	}
 	
 	

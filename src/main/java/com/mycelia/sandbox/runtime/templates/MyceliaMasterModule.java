@@ -4,7 +4,7 @@ import com.mycelia.common.framework.TaskInstance;
 import com.mycelia.common.framework.communication.Message;
 import com.mycelia.sandbox.constants.MyceliaModuleType;
 
-public abstract class MyceliaMasterModule extends MyceliaModule implements Runnable{
+public abstract class MyceliaMasterModule extends MyceliaModule{
 	
 	public MyceliaMasterModule(){
 		super(MyceliaModuleType.MASTER);
