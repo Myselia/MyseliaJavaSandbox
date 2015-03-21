@@ -45,7 +45,7 @@ public abstract class MyceliaModule implements Runnable{
 		TransmissionBuilder bob = new TransmissionBuilder();
 		if(messagemailbox.getOutQueueSize() != 0){
 			bob.newTransmission(1000, "MASTER", "STEM");
-			bob.addMessage(messagemailbox.getNextToSend());
+			bob.addMessage(messagemailbox.getFromOutQueue());
 			ComponentCommunicator.send(bob.getTransmission(), false);
 		}
 	}

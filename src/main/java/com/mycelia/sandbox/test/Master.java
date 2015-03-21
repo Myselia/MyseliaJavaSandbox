@@ -14,7 +14,7 @@ public class Master extends MyceliaMasterModule{
 	protected void tick() {
 		System.out.println("Sending stuff ... ");
 		Message bob = new Message(new String(count++ + " "));
-		messagemailbox.send(bob);
+		messagemailbox.putInOutQueue(bob);
 		System.out.println("sent");
 	}
 
