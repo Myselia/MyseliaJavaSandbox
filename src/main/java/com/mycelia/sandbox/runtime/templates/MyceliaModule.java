@@ -1,9 +1,10 @@
 package com.mycelia.sandbox.runtime.templates;
 
+import com.mycelia.common.communication.Addressable;
 import com.mycelia.common.communication.ComponentCommunicator;
 import com.mycelia.common.communication.structures.MailBox;
-import com.mycelia.common.communication.tools.TransmissionBuilder;
-import com.mycelia.common.communication.units.Message;
+import com.mycelia.common.communication.units.Transmission;
+import com.mycelia.common.communication.units.TransmissionBuilder;
 import com.mycelia.sandbox.constants.MyceliaModuleType;
 
 /**
@@ -11,11 +12,11 @@ import com.mycelia.sandbox.constants.MyceliaModuleType;
  * and communicate with other Mycelia Modules
  *
  */
-public abstract class MyceliaModule implements Runnable{
+public abstract class MyceliaModule implements Runnable, Addressable{
 	
 	private String nodeId;
 	private MyceliaModuleType moduleType;
-	protected MailBox<Message> messagemailbox = new MailBox<Message>();
+	protected MailBox<Transmission> mailbox = new MailBox<Transmission>();
 	
 	protected boolean RUNNING = true;
 	
@@ -32,7 +33,6 @@ public abstract class MyceliaModule implements Runnable{
 	public void run(){
 		while(RUNNING){
 			try{
-				forward_message();
 				tick();
 				Thread.sleep(1000);
 			} catch (Exception e){
@@ -41,14 +41,12 @@ public abstract class MyceliaModule implements Runnable{
 		}
 	}
 	
-	private void forward_message(){
-		TransmissionBuilder bob = new TransmissionBuilder();
-		if(messagemailbox.getOutQueueSize() != 0){
-			bob.newTransmission(1000, "MASTER", "STEM");
-			bob.addMessage(messagemailbox.getFromOutQueue());
-			ComponentCommunicator.send(bob.getTransmission(), false);
-		}
+	@Override
+	public MailBox<?> getMailBox(){
+		return mailbox;
 	}
+	
+	
 	
 	public abstract void setup();
 	protected abstract void tick();

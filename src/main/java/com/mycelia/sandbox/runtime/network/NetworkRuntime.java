@@ -1,7 +1,7 @@
 package com.mycelia.sandbox.runtime.network;
 
 import com.mycelia.common.communication.ComponentCommunicator;
-import com.mycelia.common.constants.ComponentType;
+import com.mycelia.common.constants.opcode.ComponentType;
 import com.mycelia.sandbox.constants.MyceliaModuleType;
 import com.mycelia.sandbox.runtime.MyceliaRuntime;
 import com.mycelia.sandbox.runtime.templates.MyceliaMasterModule;

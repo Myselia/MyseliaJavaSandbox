@@ -1,6 +1,5 @@
 package com.mycelia.sandbox.test;
 
-import com.mycelia.common.communication.units.Message;
 import com.mycelia.sandbox.runtime.templates.MyceliaMasterModule;
 
 public class Master extends MyceliaMasterModule{	
@@ -13,8 +12,7 @@ public class Master extends MyceliaMasterModule{
 	
 	protected void tick() {
 		System.out.println("Sending stuff ... ");
-		Message bob = new Message(new String(count++ + " "));
-		messagemailbox.putInOutQueue(bob);
+		
 		System.out.println("sent");
 	}
 
