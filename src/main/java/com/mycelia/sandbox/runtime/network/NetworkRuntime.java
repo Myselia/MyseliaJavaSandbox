@@ -1,6 +1,8 @@
 package com.mycelia.sandbox.runtime.network;
 
 import com.mycelia.common.communication.ComponentCommunicator;
+import com.mycelia.common.communication.MailService;
+import com.mycelia.common.communication.distributors.DistributorType;
 import com.mycelia.common.constants.opcode.ComponentType;
 import com.mycelia.sandbox.constants.MyceliaModuleType;
 import com.mycelia.sandbox.runtime.MyceliaRuntime;
@@ -14,8 +16,10 @@ public class NetworkRuntime extends MyceliaRuntime {
 	private MyceliaModule module;
 	private MyceliaModuleType moduleType;
 	
-	private Thread communicatorThread;
 	private ComponentCommunicator componentcommunicator;
+	private Thread communicatorThread;
+	
+	private Thread mailServiceThread;
 	
 	
 	public <M extends MyceliaMasterModule, S extends MyceliaSlaveModule> NetworkRuntime(Class<M> masterModule, Class<S> slaveModule){
@@ -32,9 +36,15 @@ public class NetworkRuntime extends MyceliaRuntime {
 			System.err.println("no master/slave type invoked");
 			return;
 		} else {
+			
+			mailServiceThread = new Thread(new MailService(DistributorType.FORWARDER, componenttranslation(moduleType)));
+			mailServiceThread.start();
+			
 			componentcommunicator = new ComponentCommunicator(componenttranslation(moduleType));
 			communicatorThread = new Thread(componentcommunicator);
 			communicatorThread.start();
+			
+			MailService.register("RUNTIME_DATA", componentcommunicator);
 			
 			try{
 				if(moduleType.equals(MyceliaModuleType.MASTER)){
@@ -52,6 +62,7 @@ public class NetworkRuntime extends MyceliaRuntime {
 	@Override
 	public void start() {
 		myceliaModuleThread.start();
+		MailService.registerAddressable(module);
 	}
 
 	@Override

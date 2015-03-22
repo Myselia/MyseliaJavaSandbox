@@ -2,6 +2,7 @@ package com.mycelia.sandbox.runtime.templates;
 
 import com.mycelia.common.communication.Addressable;
 import com.mycelia.common.communication.ComponentCommunicator;
+import com.mycelia.common.communication.MailService;
 import com.mycelia.common.communication.structures.MailBox;
 import com.mycelia.common.communication.units.Transmission;
 import com.mycelia.common.communication.units.TransmissionBuilder;

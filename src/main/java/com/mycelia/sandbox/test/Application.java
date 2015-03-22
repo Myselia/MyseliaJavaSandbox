@@ -23,8 +23,8 @@ public class Application {
 		
 		app.start();
 		try {
-			Thread.sleep(60000);
-		} catch (InterruptedException e) {
+			Thread.sleep(180*1000);
+		} catch (Exception e) {
 			System.err.println("application thread error");
 		}
 		app.stop();
