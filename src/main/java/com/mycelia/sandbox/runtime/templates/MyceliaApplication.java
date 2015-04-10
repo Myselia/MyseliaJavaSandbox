@@ -2,6 +2,8 @@ package com.mycelia.sandbox.runtime.templates;
 
 import com.mycelia.sandbox.constants.MyceliaModuleType;
 import com.mycelia.sandbox.constants.MyceliaRuntimeType;
+import com.mycelia.sandbox.runtime.ArgumentsInterpreter;
+import com.mycelia.sandbox.runtime.MyceliaApplicationSettings;
 import com.mycelia.sandbox.runtime.MyceliaRuntime;
 import com.mycelia.sandbox.runtime.MyceliaRuntimeFactory;
 import com.mycelia.sandbox.runtime.local.LocalRuntime;
@@ -27,8 +29,10 @@ public class MyceliaApplication <M extends MyceliaMasterModule, S extends Myceli
 	private MyceliaRuntimeType runtimeType;
 	private MyceliaRuntime runtime;
 
-	private int slaveCount = 0;
 	private MyceliaModuleType moduleType = null;
+	private int slaveCount = 4;
+	
+	private MyceliaApplicationSettings settings;
 	
 	/**
 	 * Creates a Mycelia application given a MyceliaMasterNode class and a MyceliaSlaveNode class.
@@ -40,21 +44,26 @@ public class MyceliaApplication <M extends MyceliaMasterModule, S extends Myceli
 	 * @param slaveModule Application's MyceliaSlaveModule class.
 	 * 
 	 */
-	public MyceliaApplication(Class<M> masterModule, Class<S> slaveModule)
+	public MyceliaApplication(Class<M> masterModule, Class<S> slaveModule, String[] args)
 	{
+		this.settings = ArgumentsInterpreter.interpret(args);
 		this.masterModule = masterModule;
 		this.slaveModule = slaveModule;
+		
+		init();
+	}
+	
+	private void init(){
+		setRuntimeType();
+		setModuleType();
 	}
 	
 	/**
 	 * Sets the runtime type that must be used to run this application.
 	 */
-	public void setRuntimeType(MyceliaRuntimeType runtimeType)
-	{
-		if(runtimeType==null)
-			throw new IllegalArgumentException("runtime type cannot be null");
-		
-		this.runtimeType=runtimeType;
+	public void setRuntimeType(){		
+		System.out.println(this.settings.getRuntimeType());
+		this.runtimeType = this.settings.getRuntimeType();
 	}
 	
 	/**
@@ -77,10 +86,10 @@ public class MyceliaApplication <M extends MyceliaMasterModule, S extends Myceli
 	/**
 	 * sets the module type which the application will run
 	 * it is only used if the application then starts in network mode
-	 * @param moduleType
 	 */
-	public void setModuleType(MyceliaModuleType moduleType){
-		this.moduleType = moduleType;
+	public void setModuleType(){
+		System.out.println(this.settings.getModuleType());
+		this.moduleType = this.settings.getModuleType();
 	}
 	
 	
@@ -101,10 +110,9 @@ public class MyceliaApplication <M extends MyceliaMasterModule, S extends Myceli
 		if(runtimeType == MyceliaRuntimeType.LOCAL){
 			((LocalRuntime) runtime).setSlaveCount(slaveCount);
 		} else if (runtimeType == MyceliaRuntimeType.NETWORK){
-			((NetworkRuntime) runtime).setModuleType(moduleType);
+			((NetworkRuntime) runtime).setModuleType(settings.getModuleType());
 		}
 	}
-	
 	
 	/**
 	 * Stops the Mycelia application.
