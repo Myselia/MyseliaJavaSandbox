@@ -47,6 +47,7 @@ public class LocalRuntime extends MyceliaRuntime {
 				masterModule = masterModuleClass.newInstance();
 				masterModuleThread = new Thread(masterModule); // MASTER MODULE THREAD
 				
+				slaveModuleThreadArray = new Thread[slaveCount];
 				slaveModuleArray = new MyceliaModule[slaveCount];
 				for(int i = 0; i < slaveCount; i++){
 					slaveModuleArray[i] = slaveModuleClass.newInstance();
