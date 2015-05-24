@@ -35,8 +35,9 @@ public abstract class MyceliaModule implements Runnable, Addressable{
 		while(RUNNING){
 			try{
 				tick();
-				Thread.sleep(1000);
+				Thread.sleep(100);
 			} catch (Exception e){
+				e.printStackTrace();
 				System.err.println("tick error");
 			}
 		}
