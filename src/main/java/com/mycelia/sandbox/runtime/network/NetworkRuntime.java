@@ -62,6 +62,7 @@ public class NetworkRuntime extends MyceliaRuntime {
 	@Override
 	public void start() {
 		myceliaModuleThread.start();
+		module.setup();
 		MailService.registerAddressable(module);
 	}
 

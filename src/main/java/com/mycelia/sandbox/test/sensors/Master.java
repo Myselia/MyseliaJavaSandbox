@@ -1,4 +1,4 @@
-package com.mycelia.sandbox.test;
+package com.mycelia.sandbox.test.sensors;
 
 import com.mycelia.common.communication.units.TransmissionBuilder;
 import com.mycelia.common.constants.opcode.ActionType;
@@ -11,7 +11,7 @@ public class Master extends MyceliaMasterModule {
 	TransmissionBuilder tb = new TransmissionBuilder();
 
 	public Master() {
-		System.out.println("MASTER CREATED");
+		System.out.println("BRO MASTER CREATED");
 	}
 
 	protected void tick() {
