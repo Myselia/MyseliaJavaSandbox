@@ -30,7 +30,7 @@ public class MyceliaApplication <M extends MyceliaMasterModule, S extends Myceli
 	private MyceliaRuntime runtime;
 
 	private MyceliaModuleType moduleType = null;
-	private int slaveCount = 4;
+	private int slaveCount = 1;
 	
 	private MyceliaApplicationSettings settings;
 	

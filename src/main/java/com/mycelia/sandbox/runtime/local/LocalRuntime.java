@@ -10,9 +10,6 @@ import com.mycelia.sandbox.runtime.templates.MyceliaSlaveModule;
 
 public class LocalRuntime extends MyceliaRuntime {
 	
-	//Communication tool 
-	private TransmissionForwarder transmissionforwarder;
-	
 	//Master Module Execution
 	private MyceliaModule masterModule;
 	private Thread masterModuleThread;
