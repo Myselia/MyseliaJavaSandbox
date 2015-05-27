@@ -60,8 +60,11 @@ public class LocalRuntime extends MyceliaRuntime {
 	@Override
 	public void start() {
 		masterModuleThread.start();
+		masterModule.setup();
+		
 		for(int i = 0; i < slaveCount; i++){
 			this.threadPool.execute(slaveModuleThreadArray[i]);
+			this.slaveModuleArray[i].setup();
 		}
 	}
 	

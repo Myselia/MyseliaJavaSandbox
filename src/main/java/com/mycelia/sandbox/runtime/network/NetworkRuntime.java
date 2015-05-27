@@ -77,7 +77,7 @@ public class NetworkRuntime extends MyceliaRuntime {
 		} else if(moduleType.equals(MyceliaModuleType.SLAVE)){
 			return ComponentType.SANDBOXSLAVE;
 		} else {
-			System.err.println("no suck component available");
+			System.err.println("no such component available");
 			return null;
 		}
 	}
