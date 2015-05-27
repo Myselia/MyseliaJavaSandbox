@@ -1,11 +1,11 @@
-package com.mycelia.sandbox.constants;
+package com.myselia.sandbox.constants;
 
 /**
  * The different Mycelia Runtime types
  *
  * Some Runtimes are more suited for resource-heavy applications or parallel computing
  */
-public enum MyceliaRuntimeType {
+public enum MyseliaRuntimeType {
 	
 	/**
 	 * A Mycelia Runtime running on the local computer where the application is started

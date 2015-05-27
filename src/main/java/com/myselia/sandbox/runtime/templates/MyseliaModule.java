@@ -1,27 +1,24 @@
-package com.mycelia.sandbox.runtime.templates;
+package com.myselia.sandbox.runtime.templates;
 
-import com.mycelia.common.communication.Addressable;
-import com.mycelia.common.communication.ComponentCommunicator;
-import com.mycelia.common.communication.MailService;
-import com.mycelia.common.communication.structures.MailBox;
-import com.mycelia.common.communication.units.Transmission;
-import com.mycelia.common.communication.units.TransmissionBuilder;
-import com.mycelia.sandbox.constants.MyceliaModuleType;
+import com.myselia.javacommon.communication.mail.Addressable;
+import com.myselia.javacommon.communication.mail.MailBox;
+import com.myselia.javacommon.communication.units.Transmission;
+import com.myselia.sandbox.constants.MyseliaModuleType;
 
 /**
  * A Mycelia Module capable of processing part of a Mycelia Application
  * and communicate with other Mycelia Modules
  *
  */
-public abstract class MyceliaModule implements Runnable, Addressable{
+public abstract class MyseliaModule implements Runnable, Addressable{
 	
 	private String nodeId;
-	private MyceliaModuleType moduleType;
+	private MyseliaModuleType moduleType;
 	protected MailBox<Transmission> mailbox = new MailBox<Transmission>();
 	
 	protected boolean RUNNING = true;
 	
-	public MyceliaModule(MyceliaModuleType moduleType){
+	public MyseliaModule(MyseliaModuleType moduleType){
 		this.moduleType = moduleType;
 	}
 	

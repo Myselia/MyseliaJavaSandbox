@@ -1,14 +1,14 @@
-package com.mycelia.sandbox.runtime.templates;
+package com.myselia.sandbox.runtime.templates;
 
-import com.mycelia.sandbox.constants.MyceliaModuleType;
-import com.mycelia.sandbox.constants.MyceliaRuntimeType;
-import com.mycelia.sandbox.runtime.ArgumentsInterpreter;
-import com.mycelia.sandbox.runtime.MyceliaApplicationSettings;
-import com.mycelia.sandbox.runtime.MyceliaRuntime;
-import com.mycelia.sandbox.runtime.MyceliaRuntimeFactory;
-import com.mycelia.sandbox.runtime.local.LocalRuntime;
-import com.mycelia.sandbox.runtime.network.NetworkRuntime;
-import com.mycelia.sandbox.runtime.templates.*;
+import com.myselia.sandbox.constants.MyseliaModuleType;
+import com.myselia.sandbox.constants.MyseliaRuntimeType;
+import com.myselia.sandbox.runtime.ArgumentsInterpreter;
+import com.myselia.sandbox.runtime.MyseliaApplicationSettings;
+import com.myselia.sandbox.runtime.MyseliaRuntime;
+import com.myselia.sandbox.runtime.MyseliaRuntimeFactory;
+import com.myselia.sandbox.runtime.local.LocalRuntime;
+import com.myselia.sandbox.runtime.network.NetworkRuntime;
+import com.myselia.sandbox.runtime.templates.*;
 
 /**
  * Mycelia Application
@@ -22,17 +22,17 @@ import com.mycelia.sandbox.runtime.templates.*;
  * 
  */
 
-public class MyceliaApplication <M extends MyceliaMasterModule, S extends MyceliaSlaveModule>{
+public class MyseliaApplication <M extends MyseliaMasterModule, S extends MyseliaSlaveModule>{
 	private Class<M> masterModule;
 	private Class<S> slaveModule;
 	
-	private MyceliaRuntimeType runtimeType;
-	private MyceliaRuntime runtime;
+	private MyseliaRuntimeType runtimeType;
+	private MyseliaRuntime runtime;
 
-	private MyceliaModuleType moduleType = null;
+	private MyseliaModuleType moduleType = null;
 	private int slaveCount = 1;
 	
-	private MyceliaApplicationSettings settings;
+	private MyseliaApplicationSettings settings;
 	
 	/**
 	 * Creates a Mycelia application given a MyceliaMasterNode class and a MyceliaSlaveNode class.
@@ -44,7 +44,7 @@ public class MyceliaApplication <M extends MyceliaMasterModule, S extends Myceli
 	 * @param slaveModule Application's MyceliaSlaveModule class.
 	 * 
 	 */
-	public MyceliaApplication(Class<M> masterModule, Class<S> slaveModule, String[] args)
+	public MyseliaApplication(Class<M> masterModule, Class<S> slaveModule, String[] args)
 	{
 		this.settings = ArgumentsInterpreter.interpret(args);
 		this.masterModule = masterModule;
@@ -70,7 +70,7 @@ public class MyceliaApplication <M extends MyceliaMasterModule, S extends Myceli
 	 * gets the current runtime
 	 * @return runtime
 	 */
-	public MyceliaRuntime getRuntime(){
+	public MyseliaRuntime getRuntime(){
 		return runtime;
 	}
 	
@@ -99,17 +99,17 @@ public class MyceliaApplication <M extends MyceliaMasterModule, S extends Myceli
 	 * This creates and starts the runtime environment
 	 */
 	public void start(){
-		runtime = MyceliaRuntimeFactory.buildRuntime(masterModule, slaveModule, runtimeType);
+		runtime = MyseliaRuntimeFactory.buildRuntime(masterModule, slaveModule, runtimeType);
 		runtimeParameters(runtime);
 		runtime.initialize();
 		runtime.start();
 	}
 	
 	
-	public void runtimeParameters(MyceliaRuntime runtime){
-		if(runtimeType == MyceliaRuntimeType.LOCAL){
+	public void runtimeParameters(MyseliaRuntime runtime){
+		if(runtimeType == MyseliaRuntimeType.LOCAL){
 			((LocalRuntime) runtime).setSlaveCount(slaveCount);
-		} else if (runtimeType == MyceliaRuntimeType.NETWORK){
+		} else if (runtimeType == MyseliaRuntimeType.NETWORK){
 			((NetworkRuntime) runtime).setModuleType(settings.getModuleType());
 		}
 	}

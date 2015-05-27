@@ -1,26 +1,26 @@
-package com.mycelia.sandbox.runtime.local;
+package com.myselia.sandbox.runtime.local;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.mycelia.sandbox.runtime.MyceliaRuntime;
-import com.mycelia.sandbox.runtime.templates.MyceliaMasterModule;
-import com.mycelia.sandbox.runtime.templates.MyceliaModule;
-import com.mycelia.sandbox.runtime.templates.MyceliaSlaveModule;
+import com.myselia.sandbox.runtime.MyseliaRuntime;
+import com.myselia.sandbox.runtime.templates.MyseliaMasterModule;
+import com.myselia.sandbox.runtime.templates.MyseliaModule;
+import com.myselia.sandbox.runtime.templates.MyseliaSlaveModule;
 
-public class LocalRuntime extends MyceliaRuntime {
+public class LocalRuntime extends MyseliaRuntime {
 	
 	//Master Module Execution
-	private MyceliaModule masterModule;
+	private MyseliaModule masterModule;
 	private Thread masterModuleThread;
 	
 	//Slave Modules Execution
 	private int slaveCount = 0;
-	private MyceliaModule[] slaveModuleArray;
+	private MyseliaModule[] slaveModuleArray;
 	private Thread[] slaveModuleThreadArray;
 	private ExecutorService threadPool;
 	
-	public <M extends MyceliaMasterModule, S extends MyceliaSlaveModule> LocalRuntime(Class<M> masterModule, Class<S> slaveModule){
+	public <M extends MyseliaMasterModule, S extends MyseliaSlaveModule> LocalRuntime(Class<M> masterModule, Class<S> slaveModule){
 		super(masterModule, slaveModule);
 		
 		threadPool = Executors.newFixedThreadPool(10);
@@ -45,7 +45,7 @@ public class LocalRuntime extends MyceliaRuntime {
 				masterModuleThread = new Thread(masterModule); // MASTER MODULE THREAD
 				
 				slaveModuleThreadArray = new Thread[slaveCount];
-				slaveModuleArray = new MyceliaModule[slaveCount];
+				slaveModuleArray = new MyseliaModule[slaveCount];
 				for(int i = 0; i < slaveCount; i++){
 					slaveModuleArray[i] = slaveModuleClass.newInstance();
 					slaveModuleThreadArray[i] = new Thread(slaveModuleArray[i]); // SLAVE MODULE THREAD

@@ -1,20 +1,20 @@
-package com.mycelia.sandbox.runtime.network;
+package com.myselia.sandbox.runtime.network;
 
-import com.mycelia.common.communication.ComponentCommunicator;
-import com.mycelia.common.communication.MailService;
-import com.mycelia.common.communication.distributors.DistributorType;
-import com.mycelia.common.constants.opcode.ComponentType;
-import com.mycelia.sandbox.constants.MyceliaModuleType;
-import com.mycelia.sandbox.runtime.MyceliaRuntime;
-import com.mycelia.sandbox.runtime.templates.MyceliaMasterModule;
-import com.mycelia.sandbox.runtime.templates.MyceliaModule;
-import com.mycelia.sandbox.runtime.templates.MyceliaSlaveModule;
+import com.myselia.javacommon.communication.ComponentCommunicator;
+import com.myselia.javacommon.communication.distributors.DistributorType;
+import com.myselia.javacommon.communication.mail.MailService;
+import com.myselia.javacommon.constants.opcode.ComponentType;
+import com.myselia.sandbox.constants.MyseliaModuleType;
+import com.myselia.sandbox.runtime.MyseliaRuntime;
+import com.myselia.sandbox.runtime.templates.MyseliaMasterModule;
+import com.myselia.sandbox.runtime.templates.MyseliaModule;
+import com.myselia.sandbox.runtime.templates.MyseliaSlaveModule;
 
-public class NetworkRuntime extends MyceliaRuntime {
+public class NetworkRuntime extends MyseliaRuntime {
 	
 	private Thread myceliaModuleThread;
-	private MyceliaModule module;
-	private MyceliaModuleType moduleType;
+	private MyseliaModule module;
+	private MyseliaModuleType moduleType;
 	
 	private ComponentCommunicator componentcommunicator;
 	private Thread communicatorThread;
@@ -22,11 +22,11 @@ public class NetworkRuntime extends MyceliaRuntime {
 	private Thread mailServiceThread;
 	
 	
-	public <M extends MyceliaMasterModule, S extends MyceliaSlaveModule> NetworkRuntime(Class<M> masterModule, Class<S> slaveModule){
+	public <M extends MyseliaMasterModule, S extends MyseliaSlaveModule> NetworkRuntime(Class<M> masterModule, Class<S> slaveModule){
 		super(masterModule, slaveModule);
 	}
 	
-	public void setModuleType(MyceliaModuleType moduleType){
+	public void setModuleType(MyseliaModuleType moduleType){
 		this.moduleType = moduleType;
 	}
 
@@ -47,9 +47,9 @@ public class NetworkRuntime extends MyceliaRuntime {
 			MailService.register("RUNTIME_DATA", componentcommunicator);
 			
 			try{
-				if(moduleType.equals(MyceliaModuleType.MASTER)){
+				if(moduleType.equals(MyseliaModuleType.MASTER)){
 					module = masterModuleClass.newInstance();
-				} else if(moduleType.equals(MyceliaModuleType.SLAVE)){
+				} else if(moduleType.equals(MyseliaModuleType.SLAVE)){
 					module = slaveModuleClass.newInstance();
 				} 
 				myceliaModuleThread = new Thread(module);
@@ -71,10 +71,10 @@ public class NetworkRuntime extends MyceliaRuntime {
 		System.out.println("NETWORK RUNTIME END");	
 	}
 	
-	private ComponentType componenttranslation(MyceliaModuleType moduleType){
-		if(moduleType.equals(MyceliaModuleType.MASTER)){
+	private ComponentType componenttranslation(MyseliaModuleType moduleType){
+		if(moduleType.equals(MyseliaModuleType.MASTER)){
 			return ComponentType.SANDBOXMASTER;
-		} else if(moduleType.equals(MyceliaModuleType.SLAVE)){
+		} else if(moduleType.equals(MyseliaModuleType.SLAVE)){
 			return ComponentType.SANDBOXSLAVE;
 		} else {
 			System.err.println("no such component available");

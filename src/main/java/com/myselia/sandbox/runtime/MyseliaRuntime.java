@@ -1,7 +1,7 @@
-package com.mycelia.sandbox.runtime;
+package com.myselia.sandbox.runtime;
 
-import com.mycelia.sandbox.runtime.templates.MyceliaMasterModule;
-import com.mycelia.sandbox.runtime.templates.MyceliaSlaveModule;
+import com.myselia.sandbox.runtime.templates.MyseliaMasterModule;
+import com.myselia.sandbox.runtime.templates.MyseliaSlaveModule;
 
 
 /**
@@ -13,12 +13,12 @@ import com.mycelia.sandbox.runtime.templates.MyceliaSlaveModule;
  * there are multiple concrete types of MyceliaRuntime, enumerated in MyceliaRuntimeType
  *
  */
-public abstract class MyceliaRuntime {
+public abstract class MyseliaRuntime {
 
-	protected Class<? extends MyceliaMasterModule> masterModuleClass;
-	protected Class<? extends MyceliaSlaveModule> slaveModuleClass;
+	protected Class<? extends MyseliaMasterModule> masterModuleClass;
+	protected Class<? extends MyseliaSlaveModule> slaveModuleClass;
 
-	public <M extends MyceliaMasterModule, S extends MyceliaSlaveModule> MyceliaRuntime (Class<M> masterModuleClass, Class<S> slaveModuleClass) {
+	public <M extends MyseliaMasterModule, S extends MyseliaSlaveModule> MyseliaRuntime (Class<M> masterModuleClass, Class<S> slaveModuleClass) {
 		this.masterModuleClass = masterModuleClass;
 		this.slaveModuleClass = slaveModuleClass;
 	}
