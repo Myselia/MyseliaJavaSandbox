@@ -37,7 +37,7 @@ public class NetworkRuntime extends MyseliaRuntime {
 			return;
 		} else {
 			
-			mailServiceThread = new Thread(new MailService(DistributorType.FORWARDER, componenttranslation(moduleType)));
+			mailServiceThread = new Thread(new MailService(componenttranslation(moduleType)));
 			mailServiceThread.start();
 			
 			componentcommunicator = new ComponentCommunicator(componenttranslation(moduleType));

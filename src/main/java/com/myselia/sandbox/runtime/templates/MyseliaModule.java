@@ -45,7 +45,9 @@ public abstract class MyseliaModule implements Runnable, Addressable{
 		return mailbox;
 	}
 	
-	
+	public void notifyIncomingMail(){
+		
+	}
 	
 	public abstract void setup();
 	protected abstract void tick();

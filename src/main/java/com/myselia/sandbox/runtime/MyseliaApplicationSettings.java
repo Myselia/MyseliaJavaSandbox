@@ -1,10 +1,10 @@
 package com.myselia.sandbox.runtime;
 
-import com.myselia.javacommon.configuration.MyseliaSettings;
+import com.myselia.javacommon.configuration.MyceliaSettings;
 import com.myselia.sandbox.constants.MyseliaModuleType;
 import com.myselia.sandbox.constants.MyseliaRuntimeType;
 
-public class MyseliaApplicationSettings implements MyseliaSettings {
+public class MyseliaApplicationSettings implements MyceliaSettings {
 	
 	private MyseliaModuleType moduleType = MyseliaModuleType.MASTER;
 	private MyseliaRuntimeType runtimeType = MyseliaRuntimeType.LOCAL;
