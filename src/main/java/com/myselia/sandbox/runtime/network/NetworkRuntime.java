@@ -1,7 +1,6 @@
 package com.myselia.sandbox.runtime.network;
 
 import com.myselia.javacommon.communication.ComponentCommunicator;
-import com.myselia.javacommon.communication.distributors.DistributorType;
 import com.myselia.javacommon.communication.mail.MailService;
 import com.myselia.javacommon.constants.opcode.ComponentType;
 import com.myselia.sandbox.constants.MyseliaModuleType;

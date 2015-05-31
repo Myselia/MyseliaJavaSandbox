@@ -41,12 +41,13 @@ public abstract class MyseliaModule implements Runnable, Addressable{
 	}
 	
 	@Override
-	public MailBox<?> getMailBox(){
-		return mailbox;
+	public void in(Transmission trans) {
+		mailbox.enqueueIn(trans);
 	}
-	
-	public void notifyIncomingMail(){
-		
+
+	@Override
+	public Transmission out() {
+		return mailbox.dequeueOut();
 	}
 	
 	public abstract void setup();
