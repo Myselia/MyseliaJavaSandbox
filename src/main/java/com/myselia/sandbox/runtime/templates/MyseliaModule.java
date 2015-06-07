@@ -2,6 +2,8 @@ package com.myselia.sandbox.runtime.templates;
 
 import com.myselia.javacommon.communication.mail.Addressable;
 import com.myselia.javacommon.communication.mail.MailBox;
+import com.myselia.javacommon.communication.units.Message;
+import com.myselia.javacommon.communication.units.Task;
 import com.myselia.javacommon.communication.units.Transmission;
 import com.myselia.sandbox.constants.MyseliaModuleType;
 
@@ -14,7 +16,10 @@ public abstract class MyseliaModule implements Runnable, Addressable{
 	
 	private String nodeId;
 	private MyseliaModuleType moduleType;
+	
 	protected MailBox<Transmission> mailbox = new MailBox<Transmission>();
+	protected MailBox<Message> messagebox = new MailBox<Message>();
+	protected MailBox<Task> taskbox = new MailBox<Task>();
 	
 	protected boolean RUNNING = true;
 	

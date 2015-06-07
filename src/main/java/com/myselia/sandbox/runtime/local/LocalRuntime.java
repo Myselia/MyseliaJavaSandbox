@@ -3,6 +3,8 @@ package com.myselia.sandbox.runtime.local;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.myselia.javacommon.communication.mail.MailService;
+import com.myselia.javacommon.constants.opcode.ComponentType;
 import com.myselia.sandbox.runtime.MyseliaRuntime;
 import com.myselia.sandbox.runtime.templates.MyseliaMasterModule;
 import com.myselia.sandbox.runtime.templates.MyseliaModule;
@@ -19,6 +21,9 @@ public class LocalRuntime extends MyseliaRuntime {
 	private MyseliaModule[] slaveModuleArray;
 	private Thread[] slaveModuleThreadArray;
 	private ExecutorService threadPool;
+	
+	
+	private Thread mailServiceThread;
 	
 	public <M extends MyseliaMasterModule, S extends MyseliaSlaveModule> LocalRuntime(Class<M> masterModule, Class<S> slaveModule){
 		super(masterModule, slaveModule);
@@ -41,6 +46,10 @@ public class LocalRuntime extends MyseliaRuntime {
 			return;
 		} else {
 			try{
+				
+				mailServiceThread = new Thread(new MailService(ComponentType.SANDBOXMASTER));
+				mailServiceThread.start();
+				
 				masterModule = masterModuleClass.newInstance();
 				masterModuleThread = new Thread(masterModule); // MASTER MODULE THREAD
 				
