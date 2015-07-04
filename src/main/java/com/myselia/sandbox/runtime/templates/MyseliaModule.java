@@ -53,6 +53,7 @@ public abstract class MyseliaModule implements Runnable, Addressable{
 	
 	@Override
 	public void in(Transmission trans) {
+		System.out.println("NEW TRANSMISSION COMING IN!!!!!!!!!!!!!!!!!!");
 		mailbox.enqueueIn(trans);
 		
 		Transmission newtrans = mailbox.dequeueIn();

@@ -45,8 +45,10 @@ public class NetworkRuntime extends MyseliaRuntime {
 			
 			MailService.register("RUNTIME_DATA", componentcommunicator);
 			MailService.register("RUNTIME_TRANSFER", componentcommunicator);
-			MailService.register("DATA_TESTDATA", componentcommunicator);
 			MailService.register("RUNTIME_RESULTCONTAINER", componentcommunicator);
+			MailService.register("DATA_TESTDATA", componentcommunicator);
+			MailService.register("DATA_RESULT", componentcommunicator);
+			MailService.register("DATA_RESULTCONTAINER", componentcommunicator);
 			
 			try{
 				if(moduleType.equals(MyseliaModuleType.MASTER)){
