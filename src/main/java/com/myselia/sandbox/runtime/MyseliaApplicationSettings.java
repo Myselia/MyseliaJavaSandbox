@@ -8,6 +8,7 @@ public class MyseliaApplicationSettings implements MyceliaSettings {
 	
 	private MyseliaModuleType moduleType = MyseliaModuleType.MASTER;
 	private MyseliaRuntimeType runtimeType = MyseliaRuntimeType.LOCAL;
+	private int slaveCount = 1;
 	
 	public MyseliaApplicationSettings(){
 		
@@ -28,5 +29,14 @@ public class MyseliaApplicationSettings implements MyceliaSettings {
 	public void setRuntimeType(MyseliaRuntimeType runtimeType) {
 		this.runtimeType = runtimeType;
 	}	
+	
+	public int getSlaveCount(){
+		return slaveCount;
+	}
+	
+	public void setSlaveCount(int slaveCount){
+		this.slaveCount = slaveCount;
+	}
+
 	
 }
