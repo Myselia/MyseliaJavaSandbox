@@ -43,18 +43,21 @@ public class NetworkRuntime extends MyseliaRuntime {
 			communicatorThread = new Thread(componentcommunicator);
 			communicatorThread.start();
 			
-			MailService.register("RUNTIME_DATA", componentcommunicator);
-			MailService.register("RUNTIME_TRANSFER", componentcommunicator);
-			MailService.register("RUNTIME_RESULTCONTAINER", componentcommunicator);
-			MailService.register("DATA_TESTDATA", componentcommunicator);
-			MailService.register("DATA_RESULT", componentcommunicator);
-			MailService.register("DATA_RESULTCONTAINER", componentcommunicator);
+
 			
 			try{
 				if(moduleType.equals(MyseliaModuleType.MASTER)){
 					module = masterModuleClass.newInstance();
+					
+					
 				} else if(moduleType.equals(MyseliaModuleType.SLAVE)){
 					module = slaveModuleClass.newInstance();
+					MailService.register("RUNTIME_DATA", componentcommunicator);
+					MailService.register("RUNTIME_TRANSFER", componentcommunicator);
+					MailService.register("RUNTIME_RESULTCONTAINER", componentcommunicator);
+					MailService.register("DATA_TESTDATA", componentcommunicator);
+					MailService.register("DATA_RESULT", componentcommunicator);
+					MailService.register("DATA_RESULTCONTAINER", componentcommunicator);
 				} 
 				myceliaModuleThread = new Thread(module);
 			} catch (Exception e){
