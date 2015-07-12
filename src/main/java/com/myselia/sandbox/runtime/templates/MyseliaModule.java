@@ -53,31 +53,31 @@ public abstract class MyseliaModule implements Runnable, Addressable{
 	
 	@Override
 	public void in(Transmission trans) {
-		System.out.println("NEW TRANSMISSION COMING IN!!!!!!!!!!!!!!!!!!");
 		mailbox.enqueueIn(trans);
 		
 		Transmission newtrans = mailbox.dequeueIn();
 		ArrayList<Atom> atomlist = newtrans.get_atoms();
-		boolean newmessage = false;
-		boolean newtask = false;
+		int newmessage = 0;
+		int newtask = 0;
 		
 		for(Atom atom : atomlist){
+			
 			if(atom.get_type().equals("Task")){
 				taskbox.enqueueIn(json.fromJson(atom.get_value(), Task.class));
-				newtask = true;
+				newtask++;
 			}else if(atom.get_type().equals("Message")){
 				messagebox.enqueueIn(json.fromJson(atom.get_value(), Message.class));
-				newmessage = true;
+				newmessage++;
 			}else {
 				System.err.println("Sandbox Application cannot handle non-task, non-message transmissions");
 			}
 		}
 		
-		if(newtask){
+		for(int i = newtask; i > 0; i--){
 			handleTask();
 		}
 		
-		if(newmessage){
+		for(int i = newmessage; i > 0; i--){
 			handleMessage();
 		}
 	}
