@@ -42,26 +42,25 @@ public class LocalRuntime extends MyseliaRuntime {
 	@Override
 	public void initialize() {
 		if(slaveCount == 0){
-			System.err.println("illegal slave count for local runtime");
+			System.err.println("Local Runtime : illegal slave count");
 			return;
 		} else {
 			try{
-				
 				mailServiceThread = new Thread(new MailService(ComponentType.SANDBOXMASTER));
 				mailServiceThread.start();
 				
 				masterModule = masterModuleClass.newInstance();
-				masterModuleThread = new Thread(masterModule); // MASTER MODULE THREAD
+				masterModuleThread = new Thread(masterModule);
 				
 				slaveModuleThreadArray = new Thread[slaveCount];
 				slaveModuleArray = new MyseliaModule[slaveCount];
 				for(int i = 0; i < slaveCount; i++){
 					slaveModuleArray[i] = slaveModuleClass.newInstance();
-					slaveModuleThreadArray[i] = new Thread(slaveModuleArray[i]); // SLAVE MODULE THREAD
+					slaveModuleThreadArray[i] = new Thread(slaveModuleArray[i]);
 				}
 			} catch (Exception e){
 				e.printStackTrace();
-				System.err.println("module instantiation error");
+				System.err.println("Local Runtime : Module instantiation error");
 			}
 		}
 	}
@@ -81,7 +80,6 @@ public class LocalRuntime extends MyseliaRuntime {
 	@Override
 	public void end() {
 		System.out.println("LOCAL RUNTIME END");
-		
 	}
 
 
