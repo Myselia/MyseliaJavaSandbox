@@ -8,7 +8,7 @@ public class MyseliaApplicationSettings implements MyceliaSettings {
 	
 	private MyseliaModuleType moduleType = MyseliaModuleType.MASTER;
 	private MyseliaRuntimeType runtimeType = MyseliaRuntimeType.LOCAL;
-	private int slaveCount = 1;
+	private int slaveCount = 3;
 	
 	public MyseliaApplicationSettings(){
 		

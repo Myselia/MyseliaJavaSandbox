@@ -18,7 +18,7 @@ public class LocalRuntime extends MyseliaRuntime {
 	
 	//Slave Modules Execution
 	private int slaveCount = 0;
-	private MyseliaModule[] slaveModuleArray;
+	private MyseliaSlaveModule[] slaveModuleArray;
 	private Thread[] slaveModuleThreadArray;
 	private ExecutorService threadPool;
 	
@@ -53,9 +53,10 @@ public class LocalRuntime extends MyseliaRuntime {
 				masterModuleThread = new Thread(masterModule);
 				
 				slaveModuleThreadArray = new Thread[slaveCount];
-				slaveModuleArray = new MyseliaModule[slaveCount];
+				slaveModuleArray = new MyseliaSlaveModule[slaveCount];
 				for(int i = 0; i < slaveCount; i++){
 					slaveModuleArray[i] = slaveModuleClass.newInstance();
+					slaveModuleArray[i].setSlaveID(i);
 					slaveModuleThreadArray[i] = new Thread(slaveModuleArray[i]);
 				}
 			} catch (Exception e){
