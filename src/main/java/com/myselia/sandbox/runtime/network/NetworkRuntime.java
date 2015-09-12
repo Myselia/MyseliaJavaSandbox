@@ -21,6 +21,7 @@ public class NetworkRuntime extends MyseliaRuntime {
 	private MyseliaModuleType moduleType;
 	
 	private ComponentCommunicator componentcommunicator;
+	private Thread componentCommunicatorThread;
 	
 	private Thread mailServiceThread;
 	
@@ -44,12 +45,14 @@ public class NetworkRuntime extends MyseliaRuntime {
 			mailServiceThread.start();
 			
 			componentcommunicator = new ComponentCommunicator(componenttranslation(moduleType));
-			componentcommunicator.start();
+			componentCommunicatorThread = new Thread(componentcommunicator);
+			componentCommunicatorThread.start();
 			
 
 			
 			try{
 				if(moduleType.equals(MyseliaModuleType.MASTER)){
+					System.out.println("MASTER TYPE");
 					module = masterModuleClass.newInstance();
 					String master_reg_1 = OpcodeBroker.makeMailCheckingOpcode(ActionType.DATA, LensOperation.TESTDATA);
 					MailService.register(master_reg_1, componentcommunicator);
@@ -67,8 +70,9 @@ public class NetworkRuntime extends MyseliaRuntime {
 
 	@Override
 	public void start() {
-		myceliaModuleThread.start();
+		System.out.println("Started Network Runtime, preparing to create module.");
 		module.setup();
+		myceliaModuleThread.start();
 		MailService.registerAddressable(module);
 	}
 
