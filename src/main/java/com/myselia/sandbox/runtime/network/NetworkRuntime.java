@@ -21,7 +21,6 @@ public class NetworkRuntime extends MyseliaRuntime {
 	private MyseliaModuleType moduleType;
 	
 	private ComponentCommunicator componentcommunicator;
-	private Thread communicatorThread;
 	
 	private Thread mailServiceThread;
 	
@@ -45,8 +44,7 @@ public class NetworkRuntime extends MyseliaRuntime {
 			mailServiceThread.start();
 			
 			componentcommunicator = new ComponentCommunicator(componenttranslation(moduleType));
-			communicatorThread = new Thread(componentcommunicator);
-			communicatorThread.start();
+			componentcommunicator.start();
 			
 
 			
