@@ -7,7 +7,6 @@ import com.myselia.javacommon.constants.opcode.ComponentType;
 import com.myselia.javacommon.constants.opcode.OpcodeBroker;
 import com.myselia.javacommon.constants.opcode.operations.LensOperation;
 import com.myselia.javacommon.constants.opcode.operations.SandboxMasterOperation;
-import com.myselia.javacommon.constants.opcode.operations.SandboxSlaveOperation;
 import com.myselia.sandbox.constants.MyseliaModuleType;
 import com.myselia.sandbox.runtime.MyseliaRuntime;
 import com.myselia.sandbox.runtime.templates.MyseliaMasterModule;
