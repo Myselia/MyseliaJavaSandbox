@@ -46,9 +46,7 @@ public class NetworkRuntime extends MyseliaRuntime {
 			
 			componentcommunicator = new ComponentCommunicator(componenttranslation(moduleType));
 			componentcommunicator.start();
-			
 
-			
 			try{
 				if(moduleType.equals(MyseliaModuleType.MASTER)){
 					System.out.println("MASTER TYPE");
