@@ -20,7 +20,6 @@ public class NetworkRuntime extends MyseliaRuntime {
 	private MyseliaModuleType moduleType;
 	
 	private ComponentCommunicator componentcommunicator;
-	private Thread componentCommunicatorThread;
 	
 	private Thread mailServiceThread;
 	

@@ -28,6 +28,8 @@ public class MyseliaApplication <M extends MyseliaMasterModule, S extends Myseli
 	private MyseliaApplicationSettings settings;
 	private MyseliaRuntime runtime;
 	
+	private String applicationName;
+	
 	/**
 	 * Creates an application given a MyseliaMasterModule class and a MyseliaSlaveModule class.
 	 * 
@@ -41,6 +43,14 @@ public class MyseliaApplication <M extends MyseliaMasterModule, S extends Myseli
 		this.masterModule = masterModule;
 		this.slaveModule = slaveModule;
 	}
+	
+	public void applicationName(String applicationName){
+		if(applicationName == null){
+			System.err.println("No Application Name Found");
+		} else {
+			this.applicationName = applicationName;
+		}
+	}
 
 	
 	/**
@@ -49,6 +59,9 @@ public class MyseliaApplication <M extends MyseliaMasterModule, S extends Myseli
 	 * This creates and starts the runtime environment
 	 */
 	public void start(){
+		if(applicationName == null){
+			applicationName(null);
+		}
 		runtime = MyseliaRuntimeFactory.buildRuntime(masterModule, slaveModule, settings);
 		runtime.initialize();
 		runtime.start();
