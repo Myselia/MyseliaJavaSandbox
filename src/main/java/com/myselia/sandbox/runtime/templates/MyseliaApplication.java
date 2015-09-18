@@ -1,13 +1,9 @@
 package com.myselia.sandbox.runtime.templates;
 
-import com.myselia.sandbox.constants.MyseliaModuleType;
-import com.myselia.sandbox.constants.MyseliaRuntimeType;
 import com.myselia.sandbox.runtime.ArgumentsInterpreter;
 import com.myselia.sandbox.runtime.MyseliaApplicationSettings;
 import com.myselia.sandbox.runtime.MyseliaRuntime;
 import com.myselia.sandbox.runtime.MyseliaRuntimeFactory;
-import com.myselia.sandbox.runtime.local.LocalRuntime;
-import com.myselia.sandbox.runtime.network.NetworkRuntime;
 
 /**
  * Myselia Application
