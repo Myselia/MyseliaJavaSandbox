@@ -9,6 +9,9 @@ import com.myselia.javacommon.communication.units.Atom;
 import com.myselia.javacommon.communication.units.Message;
 import com.myselia.javacommon.communication.units.Task;
 import com.myselia.javacommon.communication.units.Transmission;
+import com.myselia.javacommon.constants.opcode.OpcodeBroker;
+import com.myselia.javacommon.constants.opcode.OpcodeSegment;
+import com.myselia.javacommon.topology.MyseliaUUID;
 import com.myselia.sandbox.constants.MyseliaModuleType;
 
 /**
@@ -60,6 +63,10 @@ public abstract class MyseliaModule implements Runnable, Addressable{
 		int newmessage = 0;
 		int newtask = 0;
 		
+		String from = newtrans.get_header().get_from();
+		OpcodeSegment[] opcodeSegments = OpcodeBroker.segregate(from);
+		MyseliaUUID muuid = (MyseliaUUID) opcodeSegments[1];
+		
 		for(Atom atom : atomlist){
 			
 			if(atom.get_type().equals("Task")){
@@ -74,11 +81,11 @@ public abstract class MyseliaModule implements Runnable, Addressable{
 		}
 		
 		for(int i = newtask; i > 0; i--){
-			handleTask();
+			handleTask(muuid);
 		}
 		
 		for(int i = newmessage; i > 0; i--){
-			handleMessage();
+			handleMessage(muuid);
 		}
 	}
 
@@ -89,7 +96,7 @@ public abstract class MyseliaModule implements Runnable, Addressable{
 	
 	public abstract void setup();
 	protected abstract void tick();
-	protected abstract void handleTask();
-	protected abstract void handleMessage();
+	protected abstract void handleTask(MyseliaUUID muuid);
+	protected abstract void handleMessage(MyseliaUUID muuid);
 
 }

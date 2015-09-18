@@ -6,6 +6,7 @@ import com.myselia.sandbox.constants.MyseliaRuntimeType;
 public class ArgumentsInterpreter {
 	public static String[] arguments;
 	public static MyseliaApplicationSettings settings;
+	public static char uid;
 
 	public static MyseliaApplicationSettings interpret(String[] args) {
 		arguments = args;
@@ -31,6 +32,15 @@ public class ArgumentsInterpreter {
 			break;
 		case "-t":
 			settings.setRuntimeType(MyseliaRuntimeType.LOCAL);
+			break;
+		case "a":
+			uid = 'a';
+			break;
+		case "b":
+			uid = 'b';
+			break;
+		case "c":
+			uid = 'c';
 			break;
 		default:
 			System.err.println("unregistered flag used");
