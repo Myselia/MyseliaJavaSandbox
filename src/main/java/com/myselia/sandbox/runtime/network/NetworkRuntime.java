@@ -43,14 +43,16 @@ public class NetworkRuntime extends MyseliaRuntime {
 			//--------------------------------------------------
 			//I CHANGED THE ORDER OF STARTING THE FOLLOWING 2 THREADS. IT USED TO BE MS THEN CC.
 			//BUT BECAUSE MS NEEDS MUUID WHICH IS LOCATED IN CC, CC IS CREATED FIRST
+			MailService ms = new MailService(componenttranslation(moduleType));
 			
+			mailServiceThread = new Thread(ms);
+			mailServiceThread.start();
 			
 			//Tests
 			componentcommunicator = new ComponentCommunicator(componenttranslation(moduleType));
-			mailServiceThread = new Thread(new MailService(componenttranslation(moduleType), ComponentCommunicator.componentCertificate.getUUID()));
-			
-			mailServiceThread.start();
 			componentcommunicator.start();
+			
+			ms.generateRoutingTable(ComponentCommunicator.componentCertificate.getUUID());
 			
 			try{
 				if(moduleType.equals(MyseliaModuleType.MASTER)){
