@@ -4,7 +4,7 @@ import com.myselia.javacommon.topology.MyseliaUUID;
 
 public class VirtualSlave {
 	private char slaveid;
-	private MyseliaUUID muuid;
+	private MyseliaUUID muuid = new MyseliaUUID();
 	
 	public VirtualSlave(char slaveid){
 		this.slaveid = slaveid;

@@ -126,7 +126,7 @@ public abstract class MyseliaModule implements Runnable, Addressable{
 		tb.addAtom(field, "Message", value);
 		
 		Transmission trans_out = tb.getTransmission();
-
+		System.out.println("Tranmission to be sent out : ||" + json.toJson(trans_out) + "||");
 		mailbox.enqueueOut(trans_out);
 		MailService.notify(this);
 	}
