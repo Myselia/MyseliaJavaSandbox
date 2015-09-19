@@ -3,14 +3,22 @@ package com.myselia.sandbox.runtime.templates;
 import java.util.ArrayList;
 
 import com.google.gson.Gson;
+import com.myselia.javacommon.communication.ComponentCommunicator;
 import com.myselia.javacommon.communication.mail.Addressable;
 import com.myselia.javacommon.communication.mail.MailBox;
+import com.myselia.javacommon.communication.mail.MailService;
 import com.myselia.javacommon.communication.units.Atom;
 import com.myselia.javacommon.communication.units.Message;
 import com.myselia.javacommon.communication.units.Task;
 import com.myselia.javacommon.communication.units.Transmission;
+import com.myselia.javacommon.communication.units.TransmissionBuilder;
+import com.myselia.javacommon.constants.opcode.ActionType;
+import com.myselia.javacommon.constants.opcode.ComponentType;
 import com.myselia.javacommon.constants.opcode.OpcodeBroker;
 import com.myselia.javacommon.constants.opcode.OpcodeSegment;
+import com.myselia.javacommon.constants.opcode.operations.SandboxMasterOperation;
+import com.myselia.javacommon.constants.opcode.operations.SandboxSlaveOperation;
+import com.myselia.javacommon.topology.ComponentCertificate;
 import com.myselia.javacommon.topology.MyseliaUUID;
 import com.myselia.sandbox.constants.MyseliaModuleType;
 
@@ -29,6 +37,8 @@ public abstract class MyseliaModule implements Runnable, Addressable{
 	protected MailBox<Transmission> mailbox = new MailBox<Transmission>();
 	protected MailBox<Message> messagebox = new MailBox<Message>();
 	protected MailBox<Task> taskbox = new MailBox<Task>();
+	
+	protected TransmissionBuilder tb = new TransmissionBuilder();
 	
 	protected boolean RUNNING = true;
 	
@@ -99,4 +109,25 @@ public abstract class MyseliaModule implements Runnable, Addressable{
 	protected abstract void handleTask(MyseliaUUID muuid);
 	protected abstract void handleMessage(MyseliaUUID muuid);
 
+	public void sendMessage(String field, String value){
+		ComponentCertificate cc = null;
+		MyseliaUUID muuid = null;
+		try{
+			cc = ComponentCommunicator.componentCertificate;
+			muuid = cc.getUUID();
+		}catch (Exception e){
+			return;
+		}
+		String from_opcode = OpcodeBroker.make(ComponentType.SANDBOXSLAVE, muuid, ActionType.DATA, SandboxSlaveOperation.RESULT);
+		String to_opcode = OpcodeBroker.make(ComponentType.SANDBOXMASTER, null, ActionType.DATA, SandboxMasterOperation.RESULTCONTAINER);
+		
+		tb.newTransmission(from_opcode, to_opcode);
+		
+		tb.addAtom(field, "Message", value);
+		
+		Transmission trans_out = tb.getTransmission();
+
+		mailbox.enqueueOut(trans_out);
+		MailService.notify(this);
+	}
 }
