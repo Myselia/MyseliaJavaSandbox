@@ -56,7 +56,6 @@ public abstract class MyseliaModule implements Runnable, Addressable{
 		while(RUNNING){
 			try{
 				tick();
-				Thread.sleep(100);
 			} catch (Exception e){
 				e.printStackTrace();
 				System.err.println("tick error");
