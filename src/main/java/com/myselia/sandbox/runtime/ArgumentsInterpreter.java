@@ -42,6 +42,12 @@ public class ArgumentsInterpreter {
 		case "c":
 			uid = 'c';
 			break;
+		case "d":
+			uid = 'd';
+			break;
+		case "e":
+			uid = 'e';
+			break;
 		default:
 			System.err.println("unregistered flag used");
 			break;
